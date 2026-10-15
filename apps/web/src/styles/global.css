@@ -1,0 +1,229 @@
+@import "tailwindcss";
+
+@import "@fontsource-variable/martian-mono";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+
+/*
+ * Tese visual: o assunto do site é verificação — dígito verificador, checksum,
+ * válido ou inválido. Os dígitos são o conteúdo, então a monoespaçada dá o tom.
+ * A referência é o documento brasileiro (carimbo, campo de formulário), não o
+ * dashboard. Verde e vermelho são exclusivos do resultado da verificação.
+ */
+@theme {
+  --color-tinta-900: #15141b;
+  --color-tinta-800: #1e1c26;
+  --color-tinta-700: #2b2834;
+  --color-tinta-600: #3a3647;
+  --color-tinta-400: #8a8598;
+  --color-tinta-200: #c9c5d4;
+  --color-tinta-100: #edebf2;
+  --color-papel: #f2f1f4;
+  --color-papel-alto: #ffffff;
+
+  --color-carimbo: #6d5bd0;
+  --color-carimbo-forte: #5847c0;
+  --color-carimbo-fraco: #8f81dd;
+
+  --color-valido: #2e9e6b;
+  --color-invalido: #d5453f;
+
+  --font-display: "Martian Mono Variable", ui-monospace, monospace;
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, "SFMono-Regular", monospace;
+
+  --text-rotulo: 0.6875rem;
+  --text-rotulo--line-height: 1rem;
+  --text-rotulo--letter-spacing: 0.08em;
+
+  --radius-campo: 0.375rem;
+}
+
+/*
+ * Papéis semânticos. O tema é escuro por padrão e claro sob [data-tema='claro'],
+ * aplicado por um script inline no <head> para não piscar no carregamento.
+ */
+:root {
+  --superficie: var(--color-tinta-900);
+  --superficie-alta: var(--color-tinta-800);
+  --borda: var(--color-tinta-700);
+  --borda-forte: var(--color-tinta-600);
+  --texto: var(--color-tinta-100);
+  --texto-fraco: var(--color-tinta-400);
+  --acento: var(--color-carimbo-fraco);
+  --acento-contraste: #ffffff;
+
+  color-scheme: dark;
+}
+
+:root[data-tema="claro"] {
+  --superficie: var(--color-papel);
+  --superficie-alta: var(--color-papel-alto);
+  --borda: #d8d5e0;
+  --borda-forte: #b9b4c7;
+  --texto: #1b1922;
+  --texto-fraco: #5d5870;
+  --acento: var(--color-carimbo-forte);
+  --acento-contraste: #ffffff;
+
+  color-scheme: light;
+}
+
+@layer base {
+  * {
+    border-color: var(--borda);
+  }
+
+  html {
+    background-color: var(--superficie);
+  }
+
+  body {
+    background-color: var(--superficie);
+    color: var(--texto);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Qualquer coluna de número usa largura de dígito fixa: sem isso os
+     resultados dançam na tela a cada nova geração. */
+  code,
+  kbd,
+  samp,
+  pre,
+  input,
+  textarea,
+  output {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--acento);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-carimbo);
+    color: #fff;
+  }
+}
+
+@layer components {
+  .rotulo {
+    font-size: var(--text-rotulo);
+    line-height: var(--text-rotulo--line-height);
+    letter-spacing: var(--text-rotulo--letter-spacing);
+    text-transform: uppercase;
+    color: var(--texto-fraco);
+    font-family: var(--font-mono);
+  }
+
+  .campo {
+    width: 100%;
+    background-color: var(--superficie-alta);
+    border: 1px solid var(--borda);
+    border-radius: var(--radius-campo);
+    padding: 0.625rem 0.75rem;
+    color: var(--texto);
+    font-size: 0.9375rem;
+  }
+
+  .campo::placeholder {
+    color: var(--texto-fraco);
+  }
+
+  .botao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-campo);
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 120ms ease;
+  }
+
+  .botao-primario {
+    background-color: var(--color-carimbo);
+    color: var(--acento-contraste);
+  }
+
+  .botao-primario:hover:not(:disabled) {
+    background-color: var(--color-carimbo-forte);
+  }
+
+  .botao-primario:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .botao-discreto {
+    background-color: transparent;
+    border: 1px solid var(--borda);
+    color: var(--texto);
+  }
+
+  .botao-discreto:hover {
+    border-color: var(--borda-forte);
+  }
+
+  /* Alternador de modo das ferramentas (gerar/validar, codificar/decodificar).
+     Fica aqui, e não no CSS de uma ilha, porque é primitivo compartilhado. */
+  .abas {
+    display: inline-flex;
+    gap: 2px;
+    padding: 2px;
+    border: 1px solid var(--borda);
+    border-radius: var(--radius-campo);
+    background-color: var(--superficie-alta);
+    align-self: flex-start;
+  }
+
+  .aba {
+    background: transparent;
+    border: 0;
+    border-radius: 4px;
+    padding: 0.3125rem 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--texto-fraco);
+    cursor: pointer;
+  }
+
+  .aba.ativa {
+    background-color: var(--color-carimbo);
+    color: var(--acento-contraste);
+  }
+}
+
+/* Um gesto só: os dígitos assentam como um contador mecânico ao gerar ou
+   validar. Nada de fade-in em scroll. */
+@keyframes assentar {
+  from {
+    transform: translateY(-0.35em);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.assenta {
+  animation: assentar 180ms cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assenta {
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

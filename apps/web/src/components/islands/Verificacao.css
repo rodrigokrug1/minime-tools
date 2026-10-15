@@ -1,0 +1,106 @@
+.verificacao {
+  border: 1px solid var(--borda);
+  border-radius: var(--radius-campo);
+  background-color: var(--superficie-alta);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.passo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Em telas estreitas um CNPJ tem colunas demais: a tabela rola na horizontal
+   em vez de espremer os dígitos. */
+.conta-rolagem {
+  overflow-x: auto;
+}
+
+.conta {
+  border-collapse: collapse;
+}
+
+.conta th {
+  text-align: left;
+  padding-right: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--texto-fraco);
+  white-space: nowrap;
+}
+
+.conta td {
+  min-width: 2rem;
+  padding: 0.25rem 0.125rem;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8125rem;
+  color: var(--texto);
+  border-bottom: 1px solid var(--borda);
+}
+
+.conta .celula-caractere {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--texto);
+  background-color: var(--superficie);
+}
+
+.conta .celula-peso {
+  color: var(--texto-fraco);
+  font-size: 0.75rem;
+}
+
+.conta .celula-produto {
+  color: var(--acento);
+}
+
+.resumo {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--texto-fraco);
+  font-family: var(--font-mono);
+}
+
+.resumo strong {
+  color: var(--texto);
+  font-weight: 500;
+}
+
+.bate {
+  color: var(--color-valido);
+}
+
+.nao-bate {
+  color: var(--color-invalido);
+}
+
+.veredito {
+  margin: 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--borda);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Visível só para leitor de tela. */
+.sr-apenas {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

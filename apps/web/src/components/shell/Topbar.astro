@@ -1,0 +1,111 @@
+---
+import CommandPalette from '../islands/CommandPalette';
+---
+
+<header class="topo">
+  <a href="/" class="marca">MiniMe</a>
+
+  <div class="topo-acoes">
+    <CommandPalette client:idle />
+
+    <button type="button" id="alternar-tema" class="botao botao-discreto tema" aria-pressed="false">
+      <span class="tema-rotulo" data-escuro>Claro</span>
+      <span class="tema-rotulo" data-claro>Escuro</span>
+    </button>
+
+    <button type="button" id="abrir-rail" class="botao botao-discreto menu" aria-expanded="false">
+      Ferramentas
+    </button>
+  </div>
+</header>
+
+<script>
+  // Alternância de tema. Delegada no documento e reaplicada a cada navegação,
+  // porque com view transitions o <head> persiste mas os listeners de página
+  // não sobrevivem à troca de conteúdo.
+  const aplicar = (tema: 'claro' | 'escuro') => {
+    document.documentElement.dataset.tema = tema;
+    try {
+      localStorage.setItem('minime-tema', tema);
+    } catch {
+      /* storage indisponível: o tema vale só para esta navegação */
+    }
+  };
+
+  const ligar = () => {
+    const botao = document.getElementById('alternar-tema');
+    const menu = document.getElementById('abrir-rail');
+    const rail = document.querySelector<HTMLElement>('.coluna-rail');
+
+    botao?.addEventListener('click', () => {
+      const atual = document.documentElement.dataset.tema === 'claro' ? 'claro' : 'escuro';
+      aplicar(atual === 'claro' ? 'escuro' : 'claro');
+    });
+
+    menu?.addEventListener('click', () => {
+      const aberto = rail?.classList.toggle('aberto') ?? false;
+      menu.setAttribute('aria-expanded', String(aberto));
+    });
+  };
+
+  ligar();
+  document.addEventListener('astro:after-swap', ligar);
+</script>
+
+<style>
+  .topo {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.625rem 1rem;
+    border-bottom: 1px solid var(--borda);
+    background-color: var(--superficie);
+  }
+
+  .marca {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--texto);
+    text-decoration: none;
+  }
+
+  .topo-acoes {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .tema {
+    padding: 0.375rem 0.625rem;
+    font-size: 0.75rem;
+  }
+
+  .tema-rotulo[data-claro] {
+    display: none;
+  }
+
+  :global(:root[data-tema='claro']) .tema-rotulo[data-escuro] {
+    display: none;
+  }
+
+  :global(:root[data-tema='claro']) .tema-rotulo[data-claro] {
+    display: inline;
+  }
+
+  .menu {
+    padding: 0.375rem 0.625rem;
+    font-size: 0.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .menu {
+      display: none;
+    }
+  }
+</style>

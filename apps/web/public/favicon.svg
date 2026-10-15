@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="MiniMe">
+  <!--
+    A marca é a própria ideia do nome: a mesma forma, menor, dentro dela. Duas
+    primitivas apenas, porque o ícone precisa ser legível a 16px na aba — um
+    desenho com detalhe vira borrão nesse tamanho.
+
+    A cor é o acento do tema (--color-carimbo). Fixa, e não herdada: o favicon
+    é renderizado pelo navegador, fora do documento, onde não há variável de
+    tema para ler. O roxo tem contraste suficiente contra a aba clara e a
+    escura.
+  -->
+  <rect
+    x="4.75"
+    y="4.75"
+    width="22.5"
+    height="22.5"
+    rx="6"
+    fill="none"
+    stroke="#6d5bd0"
+    stroke-width="2.5"
+  />
+  <rect x="12" y="12" width="8" height="8" rx="2.25" fill="#6d5bd0" />
+</svg>

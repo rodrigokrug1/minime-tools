@@ -1,0 +1,24 @@
+{
+  "name": "minime-tools",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @minime/web dev",
+    "build": "pnpm --filter @minime/web build",
+    "preview": "pnpm --filter @minime/web preview",
+    "publicar": "node scripts/publicar.mjs",
+    "configurar-roteamento": "node scripts/configurar-roteamento.mjs",
+    "test": "pnpm --filter @minime/core test",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.15"
+  }
+}

@@ -1,0 +1,52 @@
+---
+import Regex from '../../components/islands/Regex';
+import Cabecalho from '../../components/shell/Cabecalho.astro';
+import TextoSeo from '../../components/shell/TextoSeo.astro';
+import Ferramenta from '../../layouts/Ferramenta.astro';
+import { buscarFerramenta } from '../../lib/registry';
+
+const meta = buscarFerramenta('testador-de-regex');
+
+if (!meta) throw new Error('Ferramenta "testador-de-regex" ausente do registry.');
+---
+
+<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+  <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
+
+  <Regex client:load />
+
+  <TextoSeo>
+    <h2>O que cada flag faz</h2>
+    <p>
+      A flag <code>g</code> procura todas as ocorrências em vez de parar na
+      primeira. A <code>i</code> ignora diferença entre maiúscula e minúscula. A
+      <code>m</code> faz <code>^</code> e <code>$</code> valerem por linha, não
+      pelo texto inteiro. A <code>s</code> faz o ponto casar também quebra de
+      linha. A <code>u</code> liga o modo unicode, necessário para trabalhar com
+      emoji e com escapes de propriedade.
+    </p>
+
+    <h2>Grupos de captura</h2>
+    <p>
+      Parênteses capturam o trecho casado e o disponibilizam numerado, da
+      esquerda para a direita. Dando nome ao grupo com a sintaxe
+      <code>(?&lt;nome&gt;...)</code>, ele passa a ser acessível pelo nome — o
+      que deixa o código que consome o resultado bem mais legível que índices.
+    </p>
+
+    <h2>Cuidado com retrocesso catastrófico</h2>
+    <p>
+      Expressões com quantificadores aninhados, como <code>(a+)+b</code>, podem
+      levar tempo exponencial em certas entradas e travar a aba. Se a página
+      congelar ao digitar um padrão, foi isso. Vale desconfiar sempre que um
+      grupo repetido contiver outro quantificador dentro.
+    </p>
+
+    <h2>Nada sai do seu navegador</h2>
+    <p>
+      A expressão e o texto de teste ficam na sua máquina. O motor usado é o do
+      próprio navegador, então o comportamento é exatamente o que seu JavaScript
+      vai encontrar em produção.
+    </p>
+  </TextoSeo>
+</Ferramenta>

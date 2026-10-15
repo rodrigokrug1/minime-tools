@@ -1,0 +1,62 @@
+---
+import Cnpj from '../../components/islands/Cnpj';
+import Cabecalho from '../../components/shell/Cabecalho.astro';
+import TextoSeo from '../../components/shell/TextoSeo.astro';
+import Ferramenta from '../../layouts/Ferramenta.astro';
+import { buscarFerramenta } from '../../lib/registry';
+
+const meta = buscarFerramenta('gerador-de-cnpj');
+
+if (!meta) throw new Error('Ferramenta "gerador-de-cnpj" ausente do registry.');
+---
+
+<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+  <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
+
+  <Cnpj client:load />
+
+  <TextoSeo>
+    <h2>O que muda no CNPJ alfanumérico</h2>
+    <p>
+      A partir de julho de 2026, novas inscrições passam a receber CNPJ com
+      letras nas doze primeiras posições. Os dois últimos caracteres continuam
+      numéricos: são os dígitos verificadores, e eles seguem sendo calculados.
+      Os CNPJs puramente numéricos já emitidos continuam válidos como estão.
+    </p>
+
+    <h2>Como entra a letra na conta do dígito</h2>
+    <p>
+      Cada caractere vira um número pelo seu código ASCII menos 48. Isso faz os
+      algarismos de 0 a 9 valerem exatamente 0 a 9, e as letras de A a Z
+      valerem de 17 a 42 — a letra A tem código 65, e 65 menos 48 dá 17.
+    </p>
+    <p>
+      Feita essa conversão, o cálculo é o mesmo de sempre: pesos 5, 4, 3, 2, 9,
+      8, 7, 6, 5, 4, 3, 2 para o primeiro dígito, e 6, 5, 4, 3, 2, 9, 8, 7, 6,
+      5, 4, 3, 2 para o segundo, que inclui o primeiro verificador na conta. A
+      soma é dividida por 11, e resto 0 ou 1 produz dígito 0. Como a conversão
+      preserva o valor dos algarismos, a mesma implementação atende os dois
+      formatos — não é preciso manter duas.
+    </p>
+
+    <h2>O que isso quebra no seu sistema</h2>
+    <p>
+      Qualquer coluna que guarde CNPJ como número inteiro deixa de servir. O
+      mesmo vale para máscaras de entrada que só aceitam dígitos, validações com
+      expressão regular de catorze números, e índices ou chaves que assumam
+      tipo numérico. Vale varrer o código atrás de:
+    </p>
+    <ul>
+      <li>campos de banco declarados como numéricos</li>
+      <li>conversões para inteiro ao ler ou gravar</li>
+      <li>expressões regulares no formato de catorze dígitos</li>
+      <li>comparações que ignoram diferença entre maiúscula e minúscula</li>
+    </ul>
+
+    <h2>Nada sai do seu navegador</h2>
+    <p>
+      O cálculo roda inteiro na sua máquina. O CNPJ que você cola para verificar
+      não vai para servidor nenhum e não fica guardado em lugar algum.
+    </p>
+  </TextoSeo>
+</Ferramenta>

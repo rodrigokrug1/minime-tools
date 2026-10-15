@@ -1,0 +1,71 @@
+---
+import Base64 from '../../components/islands/Base64';
+import Cabecalho from '../../components/shell/Cabecalho.astro';
+import TextoSeo from '../../components/shell/TextoSeo.astro';
+import Ferramenta from '../../layouts/Ferramenta.astro';
+import { buscarFerramenta } from '../../lib/registry';
+
+const meta = buscarFerramenta('base64');
+
+if (!meta) throw new Error('Ferramenta "base64" ausente do registry.');
+---
+
+<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+  <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
+
+  <Base64 client:load />
+
+  <TextoSeo>
+    <h2>O que Base64 faz</h2>
+    <p>
+      Base64 representa dados binários usando apenas 64 caracteres de texto
+      seguro: letras, números, mais e barra. Serve para transportar bytes por
+      canais que só aceitam texto — corpo de e-mail, campo de JSON, atributo de
+      HTML, URL. Cada três bytes viram quatro caracteres, o que faz o resultado
+      ficar cerca de um terço maior que o original.
+    </p>
+
+    <h2>Base64 não é criptografia</h2>
+    <p>
+      Qualquer pessoa decodifica Base64 em um segundo, sem chave nenhuma. É
+      codificação, e codificar é o oposto de esconder. Senha, token e dado
+      pessoal em Base64 estão tão expostos quanto em texto puro — o que
+      explica por que o payload de um JWT é legível por quem tiver o token.
+    </p>
+
+    <h2>A diferença do Base64URL</h2>
+    <p>
+      Os caracteres mais e barra do alfabeto padrão têm significado próprio
+      dentro de uma URL, e o sinal de igual do preenchimento também atrapalha.
+      O Base64URL troca mais por hífen, barra por sublinhado, e dispensa o
+      preenchimento. É o que o JWT usa em todas as três partes, e é o que você
+      precisa ao colocar dado codificado em query string ou em nome de arquivo.
+    </p>
+
+    <h2>O problema do acento</h2>
+    <p>
+      A função <code>btoa</code> do navegador trabalha um byte por caractere, e
+      isso quebra de dois jeitos diferentes. Com caracteres fora da faixa
+      Latin-1, como ideogramas, ela lança exceção. Com acentos comuns do
+      português ela é pior: não reclama, grava o byte errado e devolve um
+      resultado que só revela o estrago quando alguém tenta ler o dado do outro
+      lado. Esta ferramenta converte o texto para UTF-8 antes de codificar, que
+      é o que qualquer sistema espera receber.
+    </p>
+
+    <h2>Quando a decodificação não vira texto</h2>
+    <p>
+      Nem todo Base64 contém texto: pode ser imagem, certificado, arquivo
+      compactado. Quando os bytes decodificados não formam UTF-8 válido, a
+      ferramenta avisa em vez de devolver caracteres quebrados, e oferece
+      mostrar os bytes em hexadecimal.
+    </p>
+
+    <h2>Nada sai do seu navegador</h2>
+    <p>
+      A conversão roda na sua máquina. O texto colado não é enviado a servidor
+      nenhum — o que importa, considerando que Base64 costuma carregar
+      justamente aquilo que alguém achou que estava escondendo.
+    </p>
+  </TextoSeo>
+</Ferramenta>

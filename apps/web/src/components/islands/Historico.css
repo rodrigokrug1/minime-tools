@@ -1,0 +1,65 @@
+.historico {
+  margin-bottom: 2.5rem;
+}
+
+.historico-topo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.historico-limpar {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--texto-fraco);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.historico-limpar:hover {
+  color: var(--texto);
+}
+
+.historico-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.historico-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4375rem;
+  padding: 0.375rem 0.625rem;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background-color: var(--superficie-alta);
+  font-size: 0.8125rem;
+  color: var(--texto);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.historico-item .icone {
+  opacity: 0.65;
+  flex: 0 0 auto;
+}
+
+.historico-item:hover {
+  border-color: var(--acento);
+  color: var(--acento);
+}
+
+.historico-item:hover .icone {
+  opacity: 1;
+}

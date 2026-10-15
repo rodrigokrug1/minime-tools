@@ -1,0 +1,44 @@
+---
+import Sql from '../../components/islands/Sql';
+import Cabecalho from '../../components/shell/Cabecalho.astro';
+import TextoSeo from '../../components/shell/TextoSeo.astro';
+import Ferramenta from '../../layouts/Ferramenta.astro';
+import { buscarFerramenta } from '../../lib/registry';
+
+const meta = buscarFerramenta('formatador-de-sql');
+
+if (!meta) throw new Error('Ferramenta "formatador-de-sql" ausente do registry.');
+---
+
+<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+  <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
+
+  <Sql client:load />
+
+  <TextoSeo>
+    <h2>Por que o dialeto importa</h2>
+    <p>
+      Cada banco tem sintaxe própria em pontos que o formatador precisa
+      reconhecer para não quebrar a query: colchetes em identificadores e
+      variáveis com arroba no SQL Server, aspas duplas e o operador de cast com
+      dois-pontos no PostgreSQL, crase no MySQL. Escolher o dialeto errado
+      costuma produzir indentação estranha ou, no pior caso, um erro de leitura.
+    </p>
+
+    <h2>A query não sai do seu navegador</h2>
+    <p>
+      Este é o ponto da ferramenta. Uma query de produção carrega nome de
+      tabela, nome de coluna, às vezes valor literal de cliente — e colar isso
+      num site qualquer é vazamento. Aqui a formatação roda em JavaScript na sua
+      máquina: nada é enviado, nada fica em log.
+    </p>
+
+    <h2>Maiúsculas nas palavras-chave</h2>
+    <p>
+      É convenção antiga escrever as palavras reservadas em maiúsculas para
+      separar visualmente a estrutura do comando dos nomes de tabela e coluna.
+      Não muda nada na execução, e a opção pode ser desligada se o padrão da
+      sua equipe for outro.
+    </p>
+  </TextoSeo>
+</Ferramenta>

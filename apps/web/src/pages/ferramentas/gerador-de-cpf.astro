@@ -1,0 +1,60 @@
+---
+import Cpf from '../../components/islands/Cpf';
+import Cabecalho from '../../components/shell/Cabecalho.astro';
+import TextoSeo from '../../components/shell/TextoSeo.astro';
+import Ferramenta from '../../layouts/Ferramenta.astro';
+import { buscarFerramenta } from '../../lib/registry';
+
+const meta = buscarFerramenta('gerador-de-cpf');
+
+if (!meta) throw new Error('Ferramenta "gerador-de-cpf" ausente do registry.');
+---
+
+<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+  <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
+
+  <Cpf client:load />
+
+  <TextoSeo>
+    <h2>Como funciona o dígito verificador do CPF</h2>
+    <p>
+      O CPF tem onze dígitos: nove de base e dois verificadores no fim. Os dois
+      últimos não são escolhidos — saem de uma conta sobre os nove primeiros, e
+      é isso que permite detectar um número digitado errado sem consultar
+      ninguém.
+    </p>
+    <p>
+      Para o primeiro dígito, cada um dos nove é multiplicado por um peso que
+      começa em 10 e desce até 2. Os produtos são somados, e o resto da divisão
+      dessa soma por 11 decide o dígito: resto 0 ou 1 produz dígito 0, qualquer
+      outro produz 11 menos o resto. O segundo dígito repete a conta, agora com
+      dez números — os nove originais mais o primeiro verificador — e pesos de
+      11 a 2.
+    </p>
+
+    <h2>Por que 111.111.111-11 não vale</h2>
+    <p>
+      Sequências de um dígito só satisfazem a conta, porque a soma fica
+      proporcional e o módulo fecha. Mas a Receita Federal não emite esses
+      números, então qualquer validação séria recusa as onze sequências
+      repetidas antes mesmo de calcular. É um caso que passa despercebido em
+      muita implementação caseira.
+    </p>
+
+    <h2>O CPF gerado aqui pertence a alguém?</h2>
+    <p>
+      Não. O gerador sorteia nove dígitos e calcula os dois verificadores, então
+      o resultado é um número bem formado — mas não há consulta a cadastro
+      nenhum, e nada indica que ele tenha sido emitido. Serve para preencher
+      formulário em ambiente de teste e para exercitar validação, não para se
+      passar por outra pessoa.
+    </p>
+
+    <h2>Nada sai do seu navegador</h2>
+    <p>
+      A conta inteira roda na sua máquina, em JavaScript. O CPF que você digita
+      para verificar não é enviado a servidor nenhum, não fica em log e não é
+      guardado — o que importa quando o número em questão é o de um cliente.
+    </p>
+  </TextoSeo>
+</Ferramenta>

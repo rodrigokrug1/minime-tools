@@ -1,0 +1,50 @@
+---
+import Hash from '../../components/islands/Hash';
+import Cabecalho from '../../components/shell/Cabecalho.astro';
+import TextoSeo from '../../components/shell/TextoSeo.astro';
+import Ferramenta from '../../layouts/Ferramenta.astro';
+import { buscarFerramenta } from '../../lib/registry';
+
+const meta = buscarFerramenta('gerador-de-hash');
+
+if (!meta) throw new Error('Ferramenta "gerador-de-hash" ausente do registry.');
+---
+
+<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+  <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
+
+  <Hash client:load />
+
+  <TextoSeo>
+    <h2>Por que não tem MD5 aqui</h2>
+    <p>
+      A WebCrypto, que é a API de criptografia do navegador, não oferece MD5 —
+      ficou de fora por decisão da especificação, porque o algoritmo está
+      quebrado há muito tempo. Implementar MD5 à mão em JavaScript seria
+      possível, mas oferecer criptografia caseira numa ferramenta é precisamente
+      o tipo de coisa que não se deve fazer.
+    </p>
+
+    <h2>Hash não é criptografia</h2>
+    <p>
+      Hash é via única: do texto sai sempre o mesmo resumo, e do resumo não se
+      volta ao texto. Serve para verificar integridade e comparar conteúdo, não
+      para guardar algo que precise ser lido depois.
+    </p>
+
+    <h2>Por que isto não serve para senha</h2>
+    <p>
+      Guardar senha com SHA-256 puro é inseguro: o algoritmo é rápido de
+      propósito, e essa velocidade favorece quem tenta adivinhar por força
+      bruta. Senha pede função própria, lenta e com sal — bcrypt, scrypt ou
+      Argon2 — e isso pertence ao servidor, não a uma página web.
+    </p>
+
+    <h2>Nada sai do seu navegador</h2>
+    <p>
+      O cálculo usa a WebCrypto na sua máquina. Em páginas servidas por HTTP sem
+      TLS a API fica indisponível por decisão do navegador, e nesse caso a
+      ferramenta avisa em vez de falhar em silêncio.
+    </p>
+  </TextoSeo>
+</Ferramenta>

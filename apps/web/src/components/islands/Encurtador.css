@@ -1,0 +1,68 @@
+.encurtador {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.campo-linha {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 560px) {
+  .campo-linha {
+    flex-direction: row;
+  }
+
+  .campo-linha .botao {
+    flex: 0 0 auto;
+  }
+}
+
+.dica {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--texto-fraco);
+}
+
+.mensagem {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.erro {
+  color: var(--color-invalido);
+}
+
+.resultado {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  border: 1px solid var(--borda);
+  border-left: 2px solid var(--color-valido);
+  border-radius: var(--radius-campo);
+  background-color: var(--superficie-alta);
+  padding: 0.75rem;
+}
+
+.resultado-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.link {
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+  color: var(--acento);
+  word-break: break-all;
+}

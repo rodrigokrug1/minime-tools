@@ -1,0 +1,49 @@
+---
+import Horas from '../../components/islands/Horas';
+import Cabecalho from '../../components/shell/Cabecalho.astro';
+import TextoSeo from '../../components/shell/TextoSeo.astro';
+import Ferramenta from '../../layouts/Ferramenta.astro';
+import { buscarFerramenta } from '../../lib/registry';
+
+const meta = buscarFerramenta('calculadora-de-horas');
+
+if (!meta) throw new Error('Ferramenta "calculadora-de-horas" ausente do registry.');
+---
+
+<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+  <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
+
+  <Horas client:load />
+
+  <TextoSeo>
+    <h2>Como o saldo é calculado</h2>
+    <p>
+      Cada período entre uma entrada e uma saída vira uma duração em minutos. A
+      soma de todos os períodos é o total trabalhado, e o saldo é a diferença
+      entre esse total e a jornada esperada do dia. Saldo negativo significa que
+      falta tempo; positivo, que houve hora extra.
+    </p>
+
+    <h2>Turno que cruza a meia-noite</h2>
+    <p>
+      Quando a saída é menor que a entrada, a ferramenta entende que o turno
+      atravessou a meia-noite e soma as horas corretamente — das 22h às 6h dá
+      oito horas, não dezesseis negativas. Períodos acima de dezesseis horas são
+      tratados como erro de digitação.
+    </p>
+
+    <h2>Por que a conta é feita em minutos inteiros</h2>
+    <p>
+      Somar horário usando número com casa decimal acumula erro de arredondamento,
+      e um banco de horas que fecha em 7,999 horas não serve para nada. Aqui tudo
+      é convertido para minutos inteiros e só volta a formato de horas na
+      exibição.
+    </p>
+
+    <h2>Nada sai do seu navegador</h2>
+    <p>
+      Os horários ficam na sua máquina e não são salvos em lugar nenhum. Ao
+      recarregar a página, a tabela volta ao estado inicial.
+    </p>
+  </TextoSeo>
+</Ferramenta>

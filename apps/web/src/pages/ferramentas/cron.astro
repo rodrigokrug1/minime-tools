@@ -1,0 +1,76 @@
+---
+import Cron from '../../components/islands/Cron';
+import Cabecalho from '../../components/shell/Cabecalho.astro';
+import TextoSeo from '../../components/shell/TextoSeo.astro';
+import Ferramenta from '../../layouts/Ferramenta.astro';
+import { buscarFerramenta } from '../../lib/registry';
+
+const meta = buscarFerramenta('cron');
+
+if (!meta) throw new Error('Ferramenta "cron" ausente do registry.');
+---
+
+<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+  <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
+
+  <Cron client:load />
+
+  <TextoSeo>
+    <h2>Os cinco campos, na ordem</h2>
+    <p>
+      Uma expressão cron é uma linha com cinco campos separados por espaço:
+      minuto (0 a 59), hora (0 a 23), dia do mês (1 a 31), mês (1 a 12) e dia da
+      semana (0 a 6, com o domingo em 0). O asterisco em qualquer campo
+      significa "todos os valores".
+    </p>
+
+    <h2>Lista, intervalo e passo</h2>
+    <p>
+      Cada campo aceita três formas de combinar valores. A vírgula faz uma lista
+      (<code>1,15,28</code>). O hífen faz um intervalo
+      (<code>9-17</code>). A barra faz um passo, que pode vir depois de um
+      asterisco ou de um intervalo: <code>*/15</code> é de quinze em quinze a
+      partir do zero, e <code>0-20/5</code> é de cinco em cinco dentro daquela
+      faixa.
+    </p>
+
+    <h2>A pegadinha do dia do mês com dia da semana</h2>
+    <p>
+      Quando os dois campos de dia estão preenchidos, o cron dispara quando
+      <em>qualquer um dos dois</em> bate — não quando os dois batem juntos. A
+      expressão <code>0 0 15 * 1</code> roda no dia 15 de todo mês
+      <em>e também</em> em toda segunda-feira, o que dá cerca de cinco execuções
+      por mês em vez de uma. É o erro mais comum com cron, e ele costuma
+      aparecer só em produção.
+    </p>
+    <p>
+      Para rodar no dia 15 apenas quando for segunda, não existe sintaxe no cron
+      padrão: a checagem precisa ser feita dentro do próprio script.
+    </p>
+
+    <h2>Os atalhos com arroba</h2>
+    <p>
+      Em vez dos cinco campos, o cron aceita alguns nomes prontos:
+      <code>@hourly</code>, <code>@daily</code> (igual a
+      <code>@midnight</code>), <code>@weekly</code>, <code>@monthly</code> e
+      <code>@yearly</code> (igual a <code>@annually</code>). São legíveis, mas
+      todos rodam no minuto zero — e se vários serviços usarem
+      <code>@daily</code>, todos acordam exatamente à meia-noite ao mesmo tempo.
+    </p>
+
+    <h2>O fuso horário é do servidor, não o seu</h2>
+    <p>
+      As próximas execuções mostradas aqui usam o fuso do seu navegador, porque
+      é o que ajuda a conferir mentalmente. O cron de verdade roda no fuso da
+      máquina onde está — que em contêiner costuma ser UTC, três horas à frente
+      do horário de Brasília. Um agendamento para as 22h local vira 1h da manhã
+      do dia seguinte em UTC, e isso muda o dia da semana.
+    </p>
+
+    <h2>Nada sai do seu navegador</h2>
+    <p>
+      A interpretação e o cálculo das próximas datas acontecem na sua máquina.
+      Nenhuma expressão é enviada a servidor algum.
+    </p>
+  </TextoSeo>
+</Ferramenta>

@@ -1,0 +1,84 @@
+---
+import Rail from '../components/shell/Rail.astro';
+import Topbar from '../components/shell/Topbar.astro';
+import Base from './Base.astro';
+
+type Props = {
+  titulo: string;
+  descricao: string;
+  caminho?: string;
+};
+
+const { titulo, descricao, caminho } = Astro.props;
+---
+
+<Base titulo={titulo} descricao={descricao} caminho={caminho}>
+  <Topbar />
+
+  <div class="grade">
+    <div class="coluna-rail">
+      <Rail />
+    </div>
+
+    <main class="coluna-conteudo">
+      <slot />
+    </main>
+  </div>
+</Base>
+
+<script>
+  import { registrarVisita, slugDaRota } from '../lib/historico';
+
+  // Registra a visita a partir da própria rota, em vez de cada página passar
+  // o seu slug: uma ferramenta nova entra no histórico sem precisar lembrar
+  // de nada. Reexecuta após cada troca de página das view transitions.
+  const registrar = () => {
+    const slug = slugDaRota(window.location.pathname);
+
+    if (slug) registrarVisita(slug);
+  };
+
+  registrar();
+  document.addEventListener('astro:after-swap', registrar);
+</script>
+
+<style>
+  .grade {
+    display: grid;
+    grid-template-columns: 1fr;
+    min-height: calc(100vh - 3.25rem);
+  }
+
+  .coluna-rail {
+    display: none;
+  }
+
+  .coluna-rail.aberto {
+    display: block;
+    border-bottom: 1px solid var(--borda);
+  }
+
+  .coluna-conteudo {
+    padding: 1.5rem 1rem 4rem;
+    min-width: 0;
+  }
+
+  @media (min-width: 768px) {
+    .grade {
+      grid-template-columns: 240px minmax(0, 1fr);
+    }
+
+    .coluna-rail {
+      display: block;
+      position: sticky;
+      top: 3.25rem;
+      align-self: start;
+      max-height: calc(100vh - 3.25rem);
+      overflow-y: auto;
+    }
+
+    .coluna-conteudo {
+      padding: 2rem 2rem 5rem;
+    }
+  }
+</style>

@@ -1,0 +1,129 @@
+@import "./Texto.css";
+
+.cron {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  max-width: 44rem;
+}
+
+.campo-cron {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  letter-spacing: 0.02em;
+  padding: 0.625rem 0.75rem;
+}
+
+.mapa {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.mapa-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.5rem 0.375rem;
+  border: 1px solid var(--borda);
+  border-radius: var(--radius-campo);
+  background-color: var(--superficie-alta);
+  text-align: center;
+  min-width: 0;
+}
+
+.mapa-valor {
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  color: var(--acento);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mapa-rotulo {
+  font-size: 0.6875rem;
+  color: var(--texto);
+  line-height: 1.2;
+}
+
+.mapa-faixa {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--texto-fraco);
+}
+
+.descricao {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--texto);
+  border-left: 2px solid var(--acento);
+  padding-left: 0.75rem;
+}
+
+.execucoes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.execucoes li {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8125rem;
+  color: var(--texto);
+  padding: 0.1875rem 0;
+}
+
+.execucoes li + li {
+  border-top: 1px solid var(--borda);
+}
+
+.exemplos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin-top: 0.5rem;
+}
+
+.exemplos-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.exemplo {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.375rem 0.625rem;
+  border: 1px solid var(--borda);
+  border-radius: var(--radius-campo);
+  background-color: var(--superficie-alta);
+  cursor: pointer;
+  text-align: left;
+}
+
+.exemplo:hover {
+  border-color: var(--acento);
+}
+
+.exemplo code {
+  font-size: 0.75rem;
+  color: var(--acento);
+  white-space: nowrap;
+}
+
+.exemplo-para {
+  font-size: 0.75rem;
+  color: var(--texto-fraco);
+}

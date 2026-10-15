@@ -1,0 +1,46 @@
+---
+import { iconeDe } from '../../lib/icones';
+
+type Props = {
+  slug: string;
+  tamanho?: number;
+};
+
+const { slug, tamanho = 16 } = Astro.props;
+const formas = iconeDe(slug);
+---
+
+<svg
+  class="icone"
+  width={tamanho}
+  height={tamanho}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+>
+  {
+    formas.map((forma) => {
+      if (forma.tipo === 'path') return <path d={forma.d} />;
+      if (forma.tipo === 'circle') return <circle cx={forma.cx} cy={forma.cy} r={forma.r} />;
+      if (forma.tipo === 'ellipse')
+        return <ellipse cx={forma.cx} cy={forma.cy} rx={forma.rx} ry={forma.ry} />;
+
+      return (
+        <rect x={forma.x} y={forma.y} width={forma.largura} height={forma.altura} rx={forma.rx} />
+      );
+    })
+  }
+</svg>
+
+<style>
+  .icone {
+    flex: 0 0 auto;
+    /* O ícone é apoio à varredura visual, não o conteúdo: fica um passo atrás
+       do texto até a linha ficar ativa ou sob o cursor. */
+    opacity: 0.65;
+  }
+</style>

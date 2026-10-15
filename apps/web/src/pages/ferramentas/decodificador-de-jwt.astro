@@ -1,0 +1,52 @@
+---
+import Jwt from '../../components/islands/Jwt';
+import Cabecalho from '../../components/shell/Cabecalho.astro';
+import TextoSeo from '../../components/shell/TextoSeo.astro';
+import Ferramenta from '../../layouts/Ferramenta.astro';
+import { buscarFerramenta } from '../../lib/registry';
+
+const meta = buscarFerramenta('decodificador-de-jwt');
+
+if (!meta) throw new Error('Ferramenta "decodificador-de-jwt" ausente do registry.');
+---
+
+<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+  <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
+
+  <Jwt client:load />
+
+  <TextoSeo>
+    <h2>As três partes do token</h2>
+    <p>
+      Um JWT são três blocos separados por ponto. O primeiro diz qual algoritmo
+      assina o token, o segundo traz os dados — os claims — e o terceiro é a
+      assinatura. Os dois primeiros estão em base64url, que é codificação, não
+      criptografia: qualquer pessoa com o token lê o conteúdo.
+    </p>
+
+    <h2>Por que não verificamos a assinatura</h2>
+    <p>
+      Verificar exigiria a chave secreta do seu servidor, e pedir essa chave numa
+      página web é justamente o que uma ferramenta de desenvolvedor não deve
+      fazer — nem com a promessa de não enviá-la. A decodificação aqui serve
+      para inspecionar o conteúdo; a verificação pertence ao seu backend.
+    </p>
+
+    <h2>O que não colocar dentro de um JWT</h2>
+    <p>
+      Como o payload é legível por quem tiver o token, nada sensível deveria
+      estar ali: senha, documento, dado de cartão, chave de API. O token diz
+      quem é a pessoa e o que ela pode fazer — o resto fica no servidor.
+    </p>
+
+    <h2>Os claims com significado definido</h2>
+    <p>
+      Alguns nomes de claim são padronizados: <code>iss</code> para o emissor,
+      <code>sub</code> para o sujeito, <code>aud</code> para o destinatário
+      pretendido, <code>exp</code> para a expiração, <code>nbf</code> para o
+      início da validade, <code>iat</code> para o momento de emissão e
+      <code>jti</code> para um identificador único. As três datas são epoch em
+      segundos, e a ferramenta mostra cada uma já convertida.
+    </p>
+  </TextoSeo>
+</Ferramenta>

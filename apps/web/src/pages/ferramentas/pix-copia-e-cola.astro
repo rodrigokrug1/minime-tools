@@ -1,0 +1,60 @@
+---
+import Pix from '../../components/islands/Pix';
+import Cabecalho from '../../components/shell/Cabecalho.astro';
+import TextoSeo from '../../components/shell/TextoSeo.astro';
+import Ferramenta from '../../layouts/Ferramenta.astro';
+import { buscarFerramenta } from '../../lib/registry';
+
+const meta = buscarFerramenta('pix-copia-e-cola');
+
+if (!meta) throw new Error('Ferramenta "pix-copia-e-cola" ausente do registry.');
+---
+
+<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+  <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
+
+  <Pix client:load />
+
+  <TextoSeo>
+    <h2>O que é o BR Code</h2>
+    <p>
+      O texto longo que você copia para pagar um PIX é um BR Code: uma sequência
+      de campos no padrão EMV, cada um formado por um identificador, o tamanho
+      em dois dígitos e o valor. Campos podem conter outros campos dentro, e o
+      último de todos é uma soma de verificação sobre o restante.
+    </p>
+
+    <h2>Estático e dinâmico</h2>
+    <p>
+      O código gerado aqui é estático: os dados ficam dentro do próprio texto,
+      ele pode ser pago quantas vezes quiserem e não consulta nada. O dinâmico
+      guarda só uma URL que o aplicativo do banco consulta na hora, o que
+      permite cobrança com vencimento, valor variável e baixa automática — mas
+      exige um provedor de pagamento e credenciais.
+    </p>
+
+    <h2>Por que o acento é removido</h2>
+    <p>
+      O padrão restringe o conjunto de caracteres do nome e da cidade. Alguns
+      aplicativos de banco simplesmente recusam a leitura quando encontram
+      acento, então a ferramenta normaliza o texto e avisa quando faz isso. Os
+      limites também são do padrão: 25 caracteres para o nome e 15 para a
+      cidade.
+    </p>
+
+    <h2>O que é o CRC no fim</h2>
+    <p>
+      Os quatro últimos caracteres são um CRC16-CCITT calculado sobre todo o
+      restante do código, incluindo o identificador e o tamanho do próprio
+      campo de verificação. Serve para o aplicativo detectar um código truncado
+      ou alterado antes de montar o pagamento.
+    </p>
+
+    <h2>Nada sai do seu navegador</h2>
+    <p>
+      A chave PIX, o nome e o valor não vão para servidor nenhum. O código e o
+      QR são montados na sua máquina, em JavaScript — o que importa, já que a
+      chave costuma ser um CPF ou um telefone.
+    </p>
+  </TextoSeo>
+</Ferramenta>

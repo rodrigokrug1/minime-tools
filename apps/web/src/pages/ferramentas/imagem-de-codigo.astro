@@ -1,0 +1,65 @@
+---
+import ImagemDeCodigo from '../../components/islands/ImagemDeCodigo';
+import Cabecalho from '../../components/shell/Cabecalho.astro';
+import TextoSeo from '../../components/shell/TextoSeo.astro';
+import Ferramenta from '../../layouts/Ferramenta.astro';
+import { buscarFerramenta } from '../../lib/registry';
+
+const meta = buscarFerramenta('imagem-de-codigo');
+
+if (!meta) throw new Error('Ferramenta "imagem-de-codigo" ausente do registry.');
+---
+
+<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+  <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
+
+  <ImagemDeCodigo client:load />
+
+  <TextoSeo>
+    <h2>Para que serve uma imagem de código</h2>
+    <p>
+      Slide, post, documentação, resposta num chat que estraga a indentação. Em
+      todos esses lugares o código colado como texto perde o alinhamento e o
+      destaque de sintaxe, e vira um bloco cinza que ninguém lê. Como imagem,
+      ele chega do jeito que você vê no editor.
+    </p>
+    <p>
+      O contraponto vale dizer: imagem não é selecionável, não é pesquisável e
+      não é lida por leitor de tela. Para documentação que alguém vai copiar,
+      bloco de código de verdade continua sendo melhor. A imagem é para onde
+      isso não é possível.
+    </p>
+
+    <h2>Por que o resultado é desenhado, e não uma captura de tela</h2>
+    <p>
+      O caminho comum nesse tipo de ferramenta é montar um elemento com HTML e
+      CSS e convertê-lo em imagem com uma biblioteca. Essas bibliotecas
+      serializam a página dentro de um elemento de SVG, e nesse contexto o
+      navegador não carrega fontes externas — o resultado sai com a fonte de
+      sistema, com espaçamento diferente do que estava na tela.
+    </p>
+    <p>
+      Aqui a imagem é desenhada caractere por caractere no canvas, com a fonte
+      já carregada e verificada antes do primeiro traço. O resultado é idêntico
+      em qualquer navegador, e sai no dobro da resolução para não borrar em tela
+      retina nem ao ser ampliado num projetor.
+    </p>
+
+    <h2>Quais linguagens são reconhecidas</h2>
+    <p>
+      C#, SQL, TypeScript, JavaScript, JSON, Python, Java, Go, Shell, YAML, HTML
+      e CSS. É um conjunto escolhido, não a lista completa de quase duzentas
+      gramáticas que o destacador oferece — carregar todas multiplicaria o peso
+      da página por algo em torno de dez. Há também o modo sem destaque, para
+      log e texto corrido.
+    </p>
+
+    <h2>Nada sai do seu navegador</h2>
+    <p>
+      Esta é a ferramenta em que isso mais importa. Quem gera imagem de código
+      costuma estar com código de trabalho na tela, e aqui nem o texto nem a
+      imagem são enviados a lugar nenhum: o destaque de sintaxe, o desenho e a
+      exportação acontecem todos na sua máquina.
+    </p>
+  </TextoSeo>
+</Ferramenta>

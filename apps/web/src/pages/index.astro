@@ -1,0 +1,144 @@
+---
+import Historico from '../components/islands/Historico';
+import Icone from '../components/shell/Icone.astro';
+import Ferramenta from '../layouts/Ferramenta.astro';
+import { agruparPorCategoria, caminhoDa, ROTULO_CATEGORIA } from '../lib/registry';
+
+const grupos = agruparPorCategoria();
+---
+
+<Ferramenta
+  titulo="MiniMe"
+  descricao="Ferramentas online para desenvolvedores brasileiros. Rodam no seu navegador: nada do que você cola sai da sua máquina."
+  caminho="/"
+>
+  <h1 class="titulo">Ferramentas que rodam no seu navegador</h1>
+  <p class="subtitulo">Nada do que você cola aqui sai da sua máquina.</p>
+
+  <Historico client:load />
+
+  <section class="catalogo">
+    {
+      grupos.map((grupo) => (
+        <div class="grupo">
+          <h2 class="rotulo">{ROTULO_CATEGORIA[grupo.categoria]}</h2>
+          <ul class="cartoes">
+            {grupo.itens.map((item) => {
+              const conteudo = (
+                <>
+                  <span class="cartao-topo">
+                    <Icone slug={item.slug} />
+                    <span class="cartao-nome">{item.nome}</span>
+                  </span>
+                  <span class="cartao-descricao">{item.descricao}</span>
+                </>
+              );
+
+              return (
+                <li>
+                  {item.status === 'ativo' ? (
+                    <a class="cartao" href={caminhoDa(item)}>
+                      {conteudo}
+                    </a>
+                  ) : (
+                    <span class="cartao cartao-inativo">
+                      {conteudo}
+                      <span class="cartao-tag">em breve</span>
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))
+    }
+  </section>
+</Ferramenta>
+
+<style>
+  .titulo {
+    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 5vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    line-height: 1.15;
+    margin: 0 0 0.5rem;
+    max-width: 20ch;
+  }
+
+  .subtitulo {
+    margin: 0 0 2rem;
+    color: var(--texto-fraco);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    max-width: 52ch;
+  }
+
+  .grupo + .grupo {
+    margin-top: 2rem;
+  }
+
+  .cartoes {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  }
+
+  .cartao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    height: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--borda);
+    border-radius: var(--radius-campo);
+    background-color: var(--superficie-alta);
+    text-decoration: none;
+    color: var(--texto);
+  }
+
+  .cartao-topo {
+    display: flex;
+    align-items: center;
+    gap: 0.4375rem;
+  }
+
+  a.cartao:hover {
+    border-color: var(--acento);
+  }
+
+  a.cartao:hover :global(.icone) {
+    opacity: 1;
+    color: var(--acento);
+  }
+
+  .cartao-nome {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .cartao-descricao {
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--texto-fraco);
+  }
+
+  .cartao-inativo {
+    opacity: 0.6;
+  }
+
+  .cartao-tag {
+    margin-top: 0.25rem;
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    color: var(--texto-fraco);
+    border: 1px solid var(--borda);
+    border-radius: 999px;
+    padding: 0 0.375rem;
+  }
+</style>

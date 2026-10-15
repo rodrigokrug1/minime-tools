@@ -1,0 +1,51 @@
+---
+import Json from '../../components/islands/Json';
+import Cabecalho from '../../components/shell/Cabecalho.astro';
+import TextoSeo from '../../components/shell/TextoSeo.astro';
+import Ferramenta from '../../layouts/Ferramenta.astro';
+import { buscarFerramenta } from '../../lib/registry';
+
+const meta = buscarFerramenta('formatador-de-json');
+
+if (!meta) throw new Error('Ferramenta "formatador-de-json" ausente do registry.');
+---
+
+<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+  <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
+
+  <Json client:load />
+
+  <TextoSeo>
+    <h2>Formatar, minificar e validar</h2>
+    <p>
+      Formatar insere quebras de linha e indentação para o JSON ficar legível.
+      Minificar faz o contrário: remove todo espaço desnecessário, o que reduz o
+      tamanho do que trafega. As duas operações passam pelo mesmo parser, então
+      qualquer uma delas também valida o texto.
+    </p>
+
+    <h2>Como achar o erro de sintaxe</h2>
+    <p>
+      Quando o JSON não é válido, a ferramenta mostra a linha e a coluna do
+      ponto onde o parser desistiu, com um trecho do texto em volta. Vale
+      lembrar que o erro costuma estar <em>antes</em> da posição apontada: uma
+      vírgula sobrando no fim de uma lista só é percebida quando o parser
+      encontra o fecha-colchete.
+    </p>
+
+    <h2>Ordenar as chaves</h2>
+    <p>
+      A opção de ordenar reorganiza as chaves de todo objeto em ordem
+      alfabética, em qualquer profundidade, preservando a ordem dos arrays. É
+      útil para comparar dois JSONs que têm o mesmo conteúdo em ordem
+      diferente — depois de ordenar os dois, um diff comum resolve.
+    </p>
+
+    <h2>Nada sai do seu navegador</h2>
+    <p>
+      O texto é processado na sua máquina. Nenhuma parte do JSON é enviada,
+      registrada ou guardada, o que importa quando ele traz resposta de API com
+      dado real.
+    </p>
+  </TextoSeo>
+</Ferramenta>

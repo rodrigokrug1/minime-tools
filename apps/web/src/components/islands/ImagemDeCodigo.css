@@ -1,0 +1,53 @@
+@import "./Texto.css";
+
+.imagem-codigo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.area-codigo {
+  min-height: 13rem;
+  resize: vertical;
+  line-height: 1.5;
+  font-size: 0.8125rem;
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow-x: auto;
+  tab-size: 2;
+}
+
+.controles {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* A prévia rola nos dois eixos: a imagem pode passar da largura da coluna, e
+   encolhê-la mentiria sobre o resultado final. */
+.previa {
+  overflow: auto;
+  padding: 0.75rem;
+  border: 1px solid var(--borda);
+  border-radius: var(--radius-campo);
+  background-color: var(--superficie-alta);
+  /* Xadrez discreto, para a margem "nenhuma" ficar visível. */
+  background-image:
+    linear-gradient(45deg, var(--superficie) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--superficie) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--superficie) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--superficie) 75%);
+  background-size: 16px 16px;
+  background-position:
+    0 0,
+    0 8px,
+    8px -8px,
+    -8px 0;
+  max-height: 32rem;
+}
+
+.canvas {
+  display: block;
+  max-width: none;
+}

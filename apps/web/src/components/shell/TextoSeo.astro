@@ -1,0 +1,55 @@
+---
+/**
+ * Conteúdo estático abaixo da ferramenta. É o que o buscador indexa, por isso
+ * fica em HTML servido e nunca dentro de uma ilha React.
+ */
+---
+
+<div class="texto">
+  <slot />
+</div>
+
+<style>
+  .texto {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--borda);
+    max-width: 62ch;
+  }
+
+  .texto :global(h2) {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 1.75rem 0 0.5rem;
+  }
+
+  .texto :global(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .texto :global(p) {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--texto-fraco);
+  }
+
+  .texto :global(p + p) {
+    margin-top: 0.75rem;
+  }
+
+  .texto :global(code) {
+    font-size: 0.875em;
+    color: var(--texto);
+  }
+
+  .texto :global(ul) {
+    margin: 0.5rem 0 0;
+    padding-left: 1.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--texto-fraco);
+  }
+</style>

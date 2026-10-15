@@ -1,0 +1,19 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
+    "noEmit": true,
+    // Traz os tipos do Vite: import.meta.env e os módulos de efeito colateral
+    // como os imports de .css das ilhas.
+    "types": ["astro/client"]
+  },
+  // Só .ts e .tsx entram no tsc. Os .astro são verificados pelo próprio build
+  // do Astro e pela extensão do editor: o `astro check` não acompanha o
+  // TypeScript 7 e já está anunciado como descontinuado, então não vale
+  // prender o projeto a uma versão antiga do compilador por causa dele.
+  "include": [".astro/types.d.ts", "src/**/*.ts", "src/**/*.tsx", "astro.config.mjs"],
+  "exclude": ["dist", ".astro/**/*.ts"]
+}

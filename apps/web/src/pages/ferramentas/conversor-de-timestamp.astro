@@ -1,0 +1,44 @@
+---
+import Timestamp from '../../components/islands/Timestamp';
+import Cabecalho from '../../components/shell/Cabecalho.astro';
+import TextoSeo from '../../components/shell/TextoSeo.astro';
+import Ferramenta from '../../layouts/Ferramenta.astro';
+import { buscarFerramenta } from '../../lib/registry';
+
+const meta = buscarFerramenta('conversor-de-timestamp');
+
+if (!meta) throw new Error('Ferramenta "conversor-de-timestamp" ausente do registry.');
+---
+
+<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+  <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
+
+  <Timestamp client:load />
+
+  <TextoSeo>
+    <h2>Segundos ou milissegundos</h2>
+    <p>
+      Epoch é a contagem de tempo desde 1º de janeiro de 1970 em UTC. Unix e a
+      maioria das APIs contam em segundos; JavaScript conta em milissegundos. A
+      ferramenta decide pela ordem de grandeza do número — um valor em segundos
+      só alcançaria treze dígitos no ano 5138, bem depois de qualquer coisa que
+      vá aparecer num sistema real.
+    </p>
+
+    <h2>Por que o resultado em UTC e no seu fuso diferem</h2>
+    <p>
+      O instante é o mesmo; o que muda é como ele é escrito. O ISO 8601 em UTC
+      é a forma neutra, que serve para guardar e trafegar. A linha do seu fuso
+      mostra o mesmo instante como você o veria no relógio — o que costuma
+      explicar diferenças de três horas num log.
+    </p>
+
+    <h2>Guardar data em banco</h2>
+    <p>
+      A recomendação de sempre: armazene em UTC e converta só na exibição.
+      Guardar horário local gera ambiguidade duas vezes por ano nos lugares com
+      horário de verão, e torna impossível ordenar eventos de fusos diferentes
+      com confiança.
+    </p>
+  </TextoSeo>
+</Ferramenta>
