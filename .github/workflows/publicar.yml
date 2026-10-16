@@ -55,7 +55,10 @@ jobs:
       # então o valor fica impresso aqui, para comparar com a condição escrita
       # na role. Não é segredo: diz apenas o repositório e a branch.
       - name: Identidade que sera apresentada a AWS
-        run: echo "sub = repo:${{ github.repository }}:ref:${{ github.ref }}"
+        run: |
+          echo "sub  = repo:${{ github.repository }}:ref:${{ github.ref }}"
+          echo "role = [${{ vars.AWS_ROLE_ARN }}]"
+          echo "(os colchetes revelam espaco ou quebra de linha sobrando no valor)"
 
       # Nenhuma chave guardada: o GitHub apresenta um token assinado dizendo
       # qual repositório e qual branch estão rodando, e a AWS devolve uma
