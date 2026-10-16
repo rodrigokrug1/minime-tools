@@ -5,7 +5,17 @@
 import { spawnSync } from 'node:child_process';
 
 export const DOMINIO = process.env.MINIME_DOMINIO ?? 'minime.cloud';
-const PERFIL = process.env.AWS_PROFILE ?? 'rodrigokrug';
+/**
+ * Na máquina, o perfil nomeado do AWS CLI. No GitHub Actions não existe perfil
+ * nenhum: a credencial chega por variável de ambiente, de vida curta, e mandar
+ * `--profile` ali faria o comando procurar um arquivo que não existe.
+ *
+ * O sinal é `GITHUB_ACTIONS`, que só o próprio Actions define. A primeira
+ * versão disto deduzia o ambiente pela presença de `AWS_ACCESS_KEY_ID`, e era
+ * frágil: quem exporta essa variável na própria máquina perderia o perfil sem
+ * perceber, publicando com uma credencial que não a pretendida.
+ */
+const PERFIL = process.env.AWS_PROFILE ?? (process.env.GITHUB_ACTIONS ? null : 'rodrigokrug');
 
 export function encerrar(mensagem) {
   console.error(`\n✖ ${mensagem}\n`);
@@ -32,7 +42,7 @@ function citar(argumento) {
 }
 
 export function aws(argumentos, { capturar = false, tolerarFalha = false } = {}) {
-  const completos = [...argumentos, '--profile', PERFIL];
+  const completos = PERFIL ? [...argumentos, '--profile', PERFIL] : [...argumentos];
 
   const executar = () =>
     spawnSync(precisaDeShell ? 'aws' : EXECUTAVEL, completos.map(citar), {
@@ -74,6 +84,24 @@ export function awsJson(argumentos, opcoes = {}) {
  * `sync --delete`, apontar para o bucket errado apaga o site errado.
  */
 export function acharDistribuicao() {
+  // Na automação os dois vêm declarados, e a descoberta não roda. Não é
+  // economia de chamada: descobrir exige `cloudfront:ListDistributions`, que é
+  // uma permissão sobre a conta inteira, não sobre uma distribuição. Num
+  // ambiente onde ninguém está olhando, a credencial tem de poder fazer
+  // exatamente o que o deploy faz e nada além.
+  const bucketDeclarado = process.env.MINIME_BUCKET;
+  const distribuicaoDeclarada = process.env.MINIME_DISTRIBUICAO;
+
+  if (bucketDeclarado && distribuicaoDeclarada) {
+    return {
+      id: distribuicaoDeclarada,
+      origem: `${bucketDeclarado}.s3.amazonaws.com`,
+      bucket: bucketDeclarado,
+      endpointDeSite: false,
+      declarado: true,
+    };
+  }
+
   // A listagem vem inteira e o filtro é feito aqui, em vez de num `--query`: a
   // expressão JMESPath precisaria de caracteres que o cmd.exe interpreta como
   // operador, e são poucas distribuições.
@@ -108,5 +136,6 @@ export function acharDistribuicao() {
     // subpasta funcionam sem ajuda.
     bucket: origem.split('.s3')[0],
     endpointDeSite: origem.includes('.s3-website'),
+    declarado: false,
   };
 }
