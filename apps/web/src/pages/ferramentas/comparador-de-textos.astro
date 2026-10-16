@@ -1,0 +1,80 @@
+---
+import Comparador from '../../components/islands/Comparador';
+import Cabecalho from '../../components/shell/Cabecalho.astro';
+import TextoSeo from '../../components/shell/TextoSeo.astro';
+import Ferramenta from '../../layouts/Ferramenta.astro';
+import { buscarFerramenta } from '../../lib/registry';
+
+const meta = buscarFerramenta('comparador-de-textos');
+
+if (!meta) throw new Error('Ferramenta "comparador-de-textos" ausente do registry.');
+---
+
+<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+  <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
+
+  <Comparador client:load />
+
+  <TextoSeo>
+    <h2>O que o comparador mostra</h2>
+    <p>
+      Cole duas versões de um texto e a ferramenta aponta o que foi incluído,
+      removido e alterado entre elas. Serve para conferir a cláusula que mudou
+      num contrato revisado, achar a linha diferente entre dois arquivos de
+      configuração que deveriam ser idênticos, ou ver o que o colega editou
+      num trecho que você escreveu.
+    </p>
+
+    <h2>Linha a linha, e dentro da linha</h2>
+    <p>
+      Marcar a linha inteira como diferente resolve pouco: numa linha longa
+      com um caractere trocado, você ainda precisa conferir à mão. Quando as
+      duas linhas se correspondem, a comparação desce ao nível da palavra e
+      destaca só o trecho que mudou — o resto da linha fica neutro.
+    </p>
+    <p>
+      Há duas formas de ler o resultado. <strong>Lado a lado</strong> põe as
+      versões em colunas, com as linhas alinhadas: o que saiu em vermelho à
+      esquerda, o que entrou em verde à direita. <strong>Unificado</strong>
+      empilha as duas, uma embaixo da outra, que é o formato de quem está
+      acostumado a ler diferenças de código.
+    </p>
+
+    <h2>Espaços e maiúsculas</h2>
+    <p>
+      Às vezes a diferença é real e às vezes é ruído. Dois ajustes controlam
+      isso: <em>ignorar espaços</em> descarta mudanças de indentação e espaços
+      no fim da linha, útil quando um dos textos passou por um formatador; e
+      <em>ignorar maiúsculas</em> compara sem diferenciar caixa, útil para
+      conferir se um conteúdo foi apenas recapitalizado.
+    </p>
+
+    <h2>Quebra de linha não vira diferença falsa</h2>
+    <p>
+      Windows e Unix terminam a linha de formas diferentes — <code>CRLF</code>
+      e <code>LF</code>. É invisível na tela, mas basta copiar um lado de um
+      editor e o outro do navegador para que um comparador ingênuo marque
+      <em>todas</em> as linhas como alteradas. Aqui os dois textos são postos
+      na mesma convenção antes de comparar, e uma quebra sobrando no fim também
+      não conta como mudança.
+    </p>
+
+    <h2>Nada do que você cola sai do navegador</h2>
+    <p>
+      Esta é a ferramenta em que isso mais importa. Comparar versões costuma
+      significar colar contrato, arquivo de configuração, resposta de API com
+      dado de cliente — exatamente o que não deveria ser enviado a um servidor
+      desconhecido para ser processado. A comparação roda inteira na sua
+      máquina: não há envio, não há endpoint, e fechar a aba não deixa cópia
+      em lugar nenhum.
+    </p>
+
+    <h2>Qual o tamanho máximo</h2>
+    <p>
+      Vinte mil linhas de cada lado. O cálculo aguentaria mais, mas desenhar
+      um resultado maior que isso travaria a página — e travar sem explicação é
+      pior que avisar. Para arquivos acima disso, uma ferramenta de linha de
+      comando como o <code>diff</code> ou o <code>git diff</code> é o caminho.
+    </p>
+  </TextoSeo>
+</Ferramenta>

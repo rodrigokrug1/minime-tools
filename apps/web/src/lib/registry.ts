@@ -146,6 +146,15 @@ export const FERRAMENTAS: Ferramenta[] = [
     status: 'ativo',
   },
   {
+    slug: 'comparador-de-textos',
+    nome: 'Comparador de textos',
+    descricao: 'Veja o que mudou entre duas versões de um texto, linha a linha.',
+    categoria: 'texto',
+    palavrasChave: ['comparar', 'diff', 'diferença', 'text compare', 'versões', 'mudanças'],
+    clientSide: true,
+    status: 'ativo',
+  },
+  {
     slug: 'testador-de-regex',
     nome: 'Testador de regex',
     descricao: 'Teste expressões regulares com destaque dos grupos capturados.',

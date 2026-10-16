@@ -56,6 +56,17 @@ export const ICONES: Record<string, FormaIcone[]> = {
     p('M4.5 12c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3'),
   ],
 
+  // Duas colunas lado a lado com uma linha divergindo entre elas: o desenho
+  // do que a ferramenta faz, legível a 16px.
+  'comparador-de-textos': [
+    { tipo: 'rect', x: 3.5, y: 5, largura: 7, altura: 14, rx: 1.5 },
+    { tipo: 'rect', x: 13.5, y: 5, largura: 7, altura: 14, rx: 1.5 },
+    p('M6 9.5h2.5'),
+    p('M6 13h2'),
+    p('M15.5 9.5h2.5'),
+    p('M15.5 13h3'),
+  ],
+
   base64: [p('M4 8.5h10'), p('m11 5.5 3 3-3 3'), p('M20 15.5H10'), p('m13 12.5-3 3 3 3')],
 
   'decodificador-de-jwt': [

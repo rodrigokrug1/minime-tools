@@ -22,6 +22,19 @@ export {
   tokenizar,
 } from './codigo/tokens.js';
 export {
+  type Comparacao,
+  compararTextos,
+  type Lado,
+  LIMITE_DE_CARACTERES,
+  LIMITE_DE_LINHAS,
+  type OpcoesDeComparacao,
+  type ParDeLinhas,
+  type Pedaco,
+  type Resumo,
+  saoIguais,
+  type TipoDePar,
+} from './comparacao/index.js';
+export {
   type CampoCron,
   type ErroCron,
   EXEMPLOS_CRON,

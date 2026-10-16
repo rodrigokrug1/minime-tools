@@ -1,0 +1,132 @@
+.comparador-resultado {
+  margin-top: 1.25rem;
+}
+
+.comparador-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.625rem;
+}
+
+.comparador-resumo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.875rem;
+  margin: 0;
+  font-size: 0.8125rem;
+}
+
+.comparador-iguais {
+  color: var(--color-valido);
+}
+
+.comparador-conta {
+  font-family: var(--font-mono);
+}
+
+.comparador-conta-adicionada {
+  color: var(--color-valido);
+}
+
+.comparador-conta-removida {
+  color: var(--color-invalido);
+}
+
+.comparador-conta-alterada {
+  color: var(--texto-fraco);
+}
+
+.comparador-diferenca {
+  border: 1px solid var(--borda);
+  border-radius: var(--radius-campo);
+  background-color: var(--superficie-alta);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+/* Lado a lado: duas colunas de largura igual, com um fio entre elas. Em tela
+   estreita a divisão não cabe, e o unificado é a leitura possível — por isso a
+   própria grade vira uma coluna só. */
+.comparador-lado-a-lado .comparador-par {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .comparador-lado-a-lado .comparador-par {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .comparador-lado-a-lado .comparador-linha:first-child {
+    border-right: 1px solid var(--borda);
+  }
+}
+
+.comparador-linha {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0 0.5rem;
+  min-width: 0;
+}
+
+.comparador-numero {
+  flex: 0 0 2.5rem;
+  text-align: right;
+  color: var(--texto-fraco);
+  opacity: 0.6;
+  user-select: none;
+}
+
+.comparador-texto {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+/* A linha ausente existe para o lado oposto não subir: sem ela as duas colunas
+   perdem o alinhamento depois da primeira inclusão. */
+.comparador-ausente {
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent,
+    transparent 5px,
+    var(--borda) 5px,
+    var(--borda) 6px
+  );
+  opacity: 0.35;
+  min-height: 1.6em;
+}
+
+.comparador-adicionada {
+  background-color: color-mix(in srgb, var(--color-valido) 16%, transparent);
+}
+
+.comparador-removida {
+  background-color: color-mix(in srgb, var(--color-invalido) 16%, transparent);
+}
+
+.comparador-alterada {
+  background-color: color-mix(in srgb, var(--color-carimbo) 14%, transparent);
+}
+
+/* O destaque dentro da linha é o que faz a ferramenta valer: sem ele, uma
+   linha longa com um caractere trocado obriga a conferir à mão. */
+.comparador-mudou {
+  border-radius: 2px;
+  padding: 0 1px;
+  background-color: color-mix(in srgb, var(--color-carimbo) 38%, transparent);
+  color: var(--texto);
+}
+
+.comparador-removida .comparador-mudou {
+  background-color: color-mix(in srgb, var(--color-invalido) 38%, transparent);
+}
+
+.comparador-adicionada .comparador-mudou {
+  background-color: color-mix(in srgb, var(--color-valido) 38%, transparent);
+}
