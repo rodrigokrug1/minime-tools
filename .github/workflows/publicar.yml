@@ -44,6 +44,27 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
 
+      # Uma variável que não existe no repositório vira string vazia aqui, e o
+      # build assim gera um site que compila, publica e falha só no navegador.
+      # Foi o que aconteceu com PUBLIC_API_BASE_URL: o fetch virou caminho
+      # relativo e o encurtador passou a responder 404. Melhor quebrar aqui.
+      - name: Confere as variaveis do build
+        env:
+          PUBLIC_RECAPTCHA_SITE_KEY: ${{ vars.PUBLIC_RECAPTCHA_SITE_KEY }}
+          PUBLIC_API_BASE_URL: ${{ vars.PUBLIC_API_BASE_URL }}
+        run: |
+          faltando=()
+          for nome in PUBLIC_RECAPTCHA_SITE_KEY PUBLIC_API_BASE_URL; do
+            valor="${!nome}"
+            if [ -z "${valor// /}" ]; then faltando+=("$nome"); fi
+          done
+          if [ ${#faltando[@]} -ne 0 ]; then
+            echo "::error::Variaveis de repositorio vazias ou ausentes: ${faltando[*]}"
+            echo "Settings > Secrets and variables > Actions > Variables"
+            exit 1
+          fi
+          echo "Todas as variaveis do build estao preenchidas."
+
       - run: pnpm build
         env:
           PUBLIC_RECAPTCHA_SITE_KEY: ${{ vars.PUBLIC_RECAPTCHA_SITE_KEY }}

@@ -2,11 +2,18 @@ import { MENSAGEM_POR_MOTIVO, validarUrl } from '@minime/core';
 import { useEffect, useRef, useState } from 'react';
 import './Encurtador.css';
 
-const API_BASE_URL = (import.meta.env.PUBLIC_API_BASE_URL ?? 'https://api.minime.cloud').replace(
-  /\/$/,
-  '',
-);
-const RECAPTCHA_SITE_KEY = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY as string | undefined;
+/**
+ * `||` e não `??` de propósito. No GitHub Actions, `${{ vars.X }}` de uma
+ * variável que não existe vira string vazia, não `undefined` — e o `??` deixa
+ * passar. O resultado foi um `fetch('/link')` relativo, que o CloudFront
+ * respondeu com 404 enquanto a tela acusava recusa do servidor.
+ */
+const API_BASE_URL = (import.meta.env.PUBLIC_API_BASE_URL || 'https://api.minime.cloud')
+  .trim()
+  .replace(/\/$/, '');
+const RECAPTCHA_SITE_KEY = (
+  import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY as string | undefined
+)?.trim();
 
 type Estado =
   | { nome: 'ocioso' }
