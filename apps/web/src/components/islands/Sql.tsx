@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { format, type SqlLanguage } from 'sql-formatter';
+import PainelSaida from './PainelSaida';
 import './Texto.css';
 
 /**
@@ -28,11 +29,8 @@ export default function Sql() {
   const [erro, setErro] = useState<string | null>(null);
   const [dialeto, setDialeto] = useState<SqlLanguage>('tsql');
   const [maiusculas, setMaiusculas] = useState(true);
-  const [copiado, setCopiado] = useState(false);
 
   const formatar = () => {
-    setCopiado(false);
-
     if (entrada.trim() === '') {
       setErro('Cole uma query para formatar.');
       setSaida('');
@@ -56,12 +54,6 @@ export default function Sql() {
           : 'Não consegui interpretar a query.',
       );
     }
-  };
-
-  const copiar = async () => {
-    await navigator.clipboard.writeText(saida);
-    setCopiado(true);
-    window.setTimeout(() => setCopiado(false), 2000);
   };
 
   return (
@@ -108,14 +100,14 @@ export default function Sql() {
         </button>
       </div>
 
-      <div className="painéis">
+      <div className="pilha">
         <div className="painel-texto">
           <label className="rotulo" htmlFor="sql-entrada">
             Query
           </label>
           <textarea
             id="sql-entrada"
-            className="campo area"
+            className="campo area area-entrada"
             spellCheck={false}
             placeholder="Cole sua query aqui"
             value={entrada}
@@ -126,23 +118,7 @@ export default function Sql() {
           />
         </div>
 
-        <div className="painel-texto">
-          <div className="painel-topo">
-            <span className="rotulo">Formatada</span>
-            {saida !== '' && (
-              <button type="button" className="botao botao-discreto mini" onClick={copiar}>
-                {copiado ? 'Copiado' : 'Copiar'}
-              </button>
-            )}
-          </div>
-          <textarea
-            className="campo area"
-            readOnly
-            spellCheck={false}
-            placeholder="O resultado aparece aqui"
-            value={saida}
-          />
-        </div>
+        <PainelSaida rotulo="Formatada" valor={saida} />
       </div>
 
       {erro && (

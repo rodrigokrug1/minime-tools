@@ -1,5 +1,6 @@
 import { type ErroJson, formatarJson, formatarJsonOrdenado, minificarJson } from '@minime/core';
 import { useState } from 'react';
+import PainelSaida from './PainelSaida';
 import './Texto.css';
 
 const EXEMPLO = '{"nome":"Maria","ativo":true,"tags":["a","b"],"saldo":10.5}';
@@ -10,11 +11,8 @@ export default function Json() {
   const [erro, setErro] = useState<ErroJson | null>(null);
   const [espacos, setEspacos] = useState(2);
   const [ordenar, setOrdenar] = useState(false);
-  const [copiado, setCopiado] = useState(false);
 
   const aplicar = (resultado: ReturnType<typeof formatarJson>) => {
-    setCopiado(false);
-
     if (resultado.ok) {
       setSaida(resultado.saida);
       setErro(null);
@@ -28,12 +26,6 @@ export default function Json() {
     aplicar(ordenar ? formatarJsonOrdenado(entrada, espacos) : formatarJson(entrada, espacos));
 
   const minificar = () => aplicar(minificarJson(entrada));
-
-  const copiar = async () => {
-    await navigator.clipboard.writeText(saida);
-    setCopiado(true);
-    window.setTimeout(() => setCopiado(false), 2000);
-  };
 
   return (
     <div className="texto-ferramenta">
@@ -80,14 +72,14 @@ export default function Json() {
         </button>
       </div>
 
-      <div className="painéis">
+      <div className="pilha">
         <div className="painel-texto">
           <label className="rotulo" htmlFor="json-entrada">
             Entrada
           </label>
           <textarea
             id="json-entrada"
-            className="campo area"
+            className="campo area area-entrada"
             spellCheck={false}
             placeholder="Cole seu JSON aqui"
             value={entrada}
@@ -98,23 +90,7 @@ export default function Json() {
           />
         </div>
 
-        <div className="painel-texto">
-          <div className="painel-topo">
-            <span className="rotulo">Saída</span>
-            {saida !== '' && (
-              <button type="button" className="botao botao-discreto mini" onClick={copiar}>
-                {copiado ? 'Copiado' : 'Copiar'}
-              </button>
-            )}
-          </div>
-          <textarea
-            className="campo area"
-            readOnly
-            spellCheck={false}
-            placeholder="O resultado aparece aqui"
-            value={saida}
-          />
-        </div>
+        <PainelSaida rotulo="Saída" valor={saida} />
       </div>
 
       {erro && (

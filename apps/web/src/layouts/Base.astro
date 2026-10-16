@@ -72,14 +72,25 @@ const estruturado = JSON.stringify(dadosEstruturados(caminho, origem)).replace(/
     -->
     <script is:inline>
       (() => {
-        try {
-          const salvo = localStorage.getItem('minime-tema');
-          if (salvo === 'claro' || salvo === 'escuro') {
-            document.documentElement.dataset.tema = salvo;
+        const aplicar = () => {
+          try {
+            const salvo = localStorage.getItem('minime-tema');
+            if (salvo === 'claro' || salvo === 'escuro') {
+              document.documentElement.dataset.tema = salvo;
+            }
+          } catch {
+            /* storage indisponível: fica no padrão escuro */
           }
-        } catch {
-          /* storage indisponível: fica no padrão escuro */
-        }
+        };
+
+        aplicar();
+
+        // As view transitions trocam os atributos do <html> pelos do documento
+        // que chega — e esse vem do servidor, sem `data-tema`, porque o tema é
+        // escolha de quem visita e não existe no HTML gerado. Sem reaplicar
+        // aqui, a escolha se perdia a cada navegação. O `astro:after-swap` roda
+        // depois da troca e antes da pintura, então não pisca.
+        document.addEventListener('astro:after-swap', aplicar);
       })();
     </script>
 

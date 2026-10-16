@@ -147,6 +147,60 @@
   min-height: 8rem;
 }
 
+/* Entrada em cima, saída embaixo — e não lado a lado. Em JSON e SQL o
+   resultado é mais alto que a origem: a formatação quebra uma linha colada em
+   dezenas. Dividir a largura ao meio obrigava a rolar os dois lados ao mesmo
+   tempo, e nenhum deles cabia. */
+.pilha {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 1fr;
+}
+
+.pilha .area-entrada {
+  min-height: 9rem;
+}
+
+.pilha .area-saida {
+  min-height: 24rem;
+}
+
+.painel-acoes {
+  display: flex;
+  gap: 0.375rem;
+}
+
+/* Expandido: ocupa a tela inteira. Sobreposição em CSS em vez da API de tela
+   cheia do navegador, que esconde a barra de endereço e exige gesto — exagero
+   para quem só quer ler um JSON grande. */
+.painel-expandido {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  padding: 1rem;
+  gap: 0.5rem;
+  background-color: var(--superficie);
+}
+
+.painel-expandido .area-saida {
+  flex: 1;
+  min-height: 0;
+  resize: none;
+}
+
+.painel-dica {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--texto-fraco);
+  text-align: right;
+}
+
+@media (min-width: 768px) {
+  .painel-expandido {
+    padding: 1.5rem 2rem;
+  }
+}
+
 .dica-jwt {
   margin: 0;
   font-size: 0.8125rem;
