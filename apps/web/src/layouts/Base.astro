@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from 'astro:transitions';
+import Analytics from '../components/shell/Analytics.astro';
 import { dadosEstruturados, slugDoCartao } from '../lib/estruturado';
 import '../styles/global.css';
 
@@ -81,6 +82,8 @@ const estruturado = JSON.stringify(dadosEstruturados(caminho, origem)).replace(/
         }
       })();
     </script>
+
+    <Analytics />
 
     <ClientRouter />
   </head>

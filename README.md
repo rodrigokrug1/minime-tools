@@ -14,6 +14,11 @@ que você formata e para o CPF que você valida.
 A exceção é o encurtador de URL, que precisa gravar o link em algum lugar. Ele
 é o único que chama a API, e a interface diz isso na própria página.
 
+O site carrega o Google Analytics, que registra a visita: página aberta, origem
+do acesso, tipo de dispositivo. Ele não enxerga o conteúdo das ferramentas —
+o que você cola não passa por JavaScript de terceiro. A distinção é essa, e vale
+dizê-la aqui em vez de deixar quem lê descobrir no devtools.
+
 ## 🚀 Tecnologias
 
 - **Astro 7** com saída estática e ilhas React 19

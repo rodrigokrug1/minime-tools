@@ -1,0 +1,57 @@
+---
+/**
+ * Google Analytics 4.
+ *
+ * Sai só no build de produção: em `astro dev` o componente não é renderizado,
+ * para navegação local não virar sessão no relatório.
+ *
+ * O id é público por natureza — fica no HTML de qualquer forma — então não há
+ * ganho em escondê-lo numa variável de ambiente, e tê-lo aqui evita um build
+ * de produção sair mudo porque alguém esqueceu de exportar a variável.
+ */
+const ID = 'G-LRQ539TVRG';
+
+const emProducao = import.meta.env.PROD;
+---
+
+{
+  emProducao && (
+    <>
+      <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ID}`} />
+      <script is:inline define:vars={{ ID }}>
+        // O site navega por view transitions: o documento não recarrega ao
+        // trocar de ferramenta. O page_view automático do gtag dispara uma vez
+        // e nunca mais, o que reportaria só a primeira página de cada visita —
+        // justamente a métrica que interessa aqui. Por isso o automático sai e
+        // o evento vai no `astro:page-load`, que dispara na carga inicial e
+        // depois de cada navegação.
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+          window.dataLayer.push(arguments);
+        }
+
+        window.gtag = gtag;
+
+        // Localhost chegaria aqui por `astro preview`. O relatório é de
+        // produção; o resto é ruído.
+        var local =
+          location.hostname === 'localhost' ||
+          location.hostname === '127.0.0.1' ||
+          location.hostname === '';
+
+        if (!local) {
+          gtag('js', new Date());
+          gtag('config', ID, { send_page_view: false });
+
+          document.addEventListener('astro:page-load', function () {
+            gtag('event', 'page_view', {
+              page_location: location.href,
+              page_title: document.title,
+            });
+          });
+        }
+      </script>
+    </>
+  )
+}
