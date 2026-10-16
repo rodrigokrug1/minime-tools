@@ -54,11 +54,33 @@ jobs:
       # sts:AssumeRoleWithWebIdentity", ela não diz qual parte não conferiu —
       # então o valor fica impresso aqui, para comparar com a condição escrita
       # na role. Não é segredo: diz apenas o repositório e a branch.
-      - name: Identidade que sera apresentada a AWS
+      # TEMPORARIO - diagnostico. Le o proprio token OIDC e publica as claims
+      # que a politica de confianca compara. O token nunca e impresso: so o
+      # `sub`, o `aud` e o `ref`, que nao sao segredo. Sai daqui assim que o
+      # deploy passar.
+      - name: Claims reais do token OIDC
         run: |
-          echo "sub  = repo:${{ github.repository }}:ref:${{ github.ref }}"
-          echo "role = [${{ vars.AWS_ROLE_ARN }}]"
-          echo "(os colchetes revelam espaco ou quebra de linha sobrando no valor)"
+          python3 - <<'FIM'
+          import base64, json, os, urllib.request
+
+          url = os.environ['ACTIONS_ID_TOKEN_REQUEST_URL'] + '&audience=sts.amazonaws.com'
+          pedido = urllib.request.Request(
+              url,
+              headers={'Authorization': 'bearer ' + os.environ['ACTIONS_ID_TOKEN_REQUEST_TOKEN']},
+          )
+          token = json.load(urllib.request.urlopen(pedido))['value']
+
+          carga = token.split('.')[1]
+          carga += '=' * (-len(carga) % 4)
+          claims = json.loads(base64.urlsafe_b64decode(carga))
+
+          # repr() revela espaco ou caractere invisivel sobrando
+          resumo = ' | '.join(
+              f'{nome}={claims.get(nome)!r}' for nome in ('sub', 'aud', 'repository', 'ref')
+          )
+          print(resumo)
+          print(f'::notice title=claims::{resumo}')
+          FIM
 
       # Nenhuma chave guardada: o GitHub apresenta um token assinado dizendo
       # qual repositório e qual branch estão rodando, e a AWS devolve uma
