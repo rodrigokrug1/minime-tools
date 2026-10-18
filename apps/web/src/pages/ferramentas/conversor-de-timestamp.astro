@@ -3,14 +3,14 @@ import Timestamp from '../../components/islands/Timestamp';
 import Cabecalho from '../../components/shell/Cabecalho.astro';
 import TextoSeo from '../../components/shell/TextoSeo.astro';
 import Ferramenta from '../../layouts/Ferramenta.astro';
-import { buscarFerramenta } from '../../lib/registry';
+import { buscarFerramenta, tituloSeo } from '../../lib/registry';
 
 const meta = buscarFerramenta('conversor-de-timestamp');
 
 if (!meta) throw new Error('Ferramenta "conversor-de-timestamp" ausente do registry.');
 ---
 
-<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+<Ferramenta titulo={tituloSeo(meta)} descricao={meta.descricao}>
   <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
 
   <Timestamp client:load />

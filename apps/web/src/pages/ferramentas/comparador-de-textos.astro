@@ -3,14 +3,14 @@ import Comparador from '../../components/islands/Comparador';
 import Cabecalho from '../../components/shell/Cabecalho.astro';
 import TextoSeo from '../../components/shell/TextoSeo.astro';
 import Ferramenta from '../../layouts/Ferramenta.astro';
-import { buscarFerramenta } from '../../lib/registry';
+import { buscarFerramenta, tituloSeo } from '../../lib/registry';
 
 const meta = buscarFerramenta('comparador-de-textos');
 
 if (!meta) throw new Error('Ferramenta "comparador-de-textos" ausente do registry.');
 ---
 
-<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+<Ferramenta titulo={tituloSeo(meta)} descricao={meta.descricao}>
   <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
 
   <Comparador client:load />

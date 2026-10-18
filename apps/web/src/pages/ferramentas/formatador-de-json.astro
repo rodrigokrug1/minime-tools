@@ -3,14 +3,14 @@ import Json from '../../components/islands/Json';
 import Cabecalho from '../../components/shell/Cabecalho.astro';
 import TextoSeo from '../../components/shell/TextoSeo.astro';
 import Ferramenta from '../../layouts/Ferramenta.astro';
-import { buscarFerramenta } from '../../lib/registry';
+import { buscarFerramenta, tituloSeo } from '../../lib/registry';
 
 const meta = buscarFerramenta('formatador-de-json');
 
 if (!meta) throw new Error('Ferramenta "formatador-de-json" ausente do registry.');
 ---
 
-<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+<Ferramenta titulo={tituloSeo(meta)} descricao={meta.descricao}>
   <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
 
   <Json client:load />
@@ -46,6 +46,16 @@ if (!meta) throw new Error('Ferramenta "formatador-de-json" ausente do registry.
       O texto é processado na sua máquina. Nenhuma parte do JSON é enviada,
       registrada ou guardada, o que importa quando ele traz resposta de API com
       dado real.
+    </p>
+
+    <h2>JSON formatter, beautifier, pretty print</h2>
+    <p>
+      Quase toda a documentação sobre JSON está em inglês, e a mesma ferramenta
+      aparece por nomes diferentes: <em>JSON formatter</em> e
+      <em>JSON beautifier</em> são indentar, <em>pretty print</em> é o nome do
+      resultado indentado, e <em>JSON viewer</em> costuma ser o mesmo recurso
+      com a árvore do documento navegável. Minificar aparece como
+      <em>minify</em> ou <em>compact</em>. São todos o que esta página faz.
     </p>
   </TextoSeo>
 </Ferramenta>

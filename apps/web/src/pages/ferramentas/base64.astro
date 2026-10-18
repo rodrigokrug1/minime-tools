@@ -3,14 +3,14 @@ import Base64 from '../../components/islands/Base64';
 import Cabecalho from '../../components/shell/Cabecalho.astro';
 import TextoSeo from '../../components/shell/TextoSeo.astro';
 import Ferramenta from '../../layouts/Ferramenta.astro';
-import { buscarFerramenta } from '../../lib/registry';
+import { buscarFerramenta, tituloSeo } from '../../lib/registry';
 
 const meta = buscarFerramenta('base64');
 
 if (!meta) throw new Error('Ferramenta "base64" ausente do registry.');
 ---
 
-<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+<Ferramenta titulo={tituloSeo(meta)} descricao={meta.descricao}>
   <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
 
   <Base64 client:load />

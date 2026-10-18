@@ -3,14 +3,14 @@ import Sql from '../../components/islands/Sql';
 import Cabecalho from '../../components/shell/Cabecalho.astro';
 import TextoSeo from '../../components/shell/TextoSeo.astro';
 import Ferramenta from '../../layouts/Ferramenta.astro';
-import { buscarFerramenta } from '../../lib/registry';
+import { buscarFerramenta, tituloSeo } from '../../lib/registry';
 
 const meta = buscarFerramenta('formatador-de-sql');
 
 if (!meta) throw new Error('Ferramenta "formatador-de-sql" ausente do registry.');
 ---
 
-<Ferramenta titulo={meta.nome} descricao={meta.descricao}>
+<Ferramenta titulo={tituloSeo(meta)} descricao={meta.descricao}>
   <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
 
   <Sql client:load />
@@ -39,6 +39,14 @@ if (!meta) throw new Error('Ferramenta "formatador-de-sql" ausente do registry.'
       separar visualmente a estrutura do comando dos nomes de tabela e coluna.
       Não muda nada na execução, e a opção pode ser desligada se o padrão da
       sua equipe for outro.
+    </p>
+
+    <h2>SQL formatter e SQL beautifier</h2>
+    <p>
+      Em inglês a ferramenta aparece como <em>SQL formatter</em> ou
+      <em>SQL beautifier</em>, e <em>pretty print</em> descreve a query já
+      indentada. É o mesmo que esta página faz — com a diferença, que não é
+      pequena, de a query não sair da sua máquina.
     </p>
   </TextoSeo>
 </Ferramenta>

@@ -14,6 +14,16 @@ export type Ferramenta = {
   nome: string;
   /** Vira a meta description e o texto do card. Uma frase. */
   descricao: string;
+  /**
+   * Título da aba e do resultado de busca, quando precisa divergir do `nome`.
+   *
+   * Existe por um motivo medido: `json formatter` tem de 10 mil a 100 mil
+   * buscas por mês vindas do Brasil, contra 100 a 1 mil de `formatador de
+   * json`. Quem programa procura a ferramenta em inglês. O `nome` continua em
+   * português porque alimenta o rail, o command palette e o card da home, onde
+   * um título longo com dois idiomas fica ilegível.
+   */
+  tituloSeo?: string;
   categoria: Categoria;
   /** Termos de busca para o command palette. */
   palavrasChave: string[];
@@ -94,20 +104,24 @@ export const FERRAMENTAS: Ferramenta[] = [
   {
     slug: 'formatador-de-json',
     nome: 'Formatador de JSON',
-    descricao: 'Idente, minifique e valide JSON sem que o conteúdo saia do navegador.',
+    tituloSeo: 'Formatador de JSON online — JSON Formatter',
+    descricao: 'Indente, minifique e valide JSON sem que o conteúdo saia do navegador.',
     categoria: 'texto',
-    palavrasChave: ['json', 'formatar', 'identar', 'minificar', 'validar'],
+    palavrasChave: ['json', 'formatar', 'indentar', 'minificar', 'validar', 'json formatter'],
     clientSide: true,
     status: 'ativo',
+    atualizadoEm: '2026-10-18',
   },
   {
     slug: 'formatador-de-sql',
     nome: 'Formatador de SQL',
+    tituloSeo: 'Formatador de SQL online — SQL Formatter',
     descricao: 'Organize queries de T-SQL, PostgreSQL e outros dialetos no seu navegador.',
     categoria: 'texto',
-    palavrasChave: ['sql', 'formatar', 'query', 'tsql', 'postgres'],
+    palavrasChave: ['sql', 'formatar', 'query', 'tsql', 'postgres', 'sql formatter'],
     clientSide: true,
     status: 'ativo',
+    atualizadoEm: '2026-10-18',
   },
   {
     slug: 'base64',
@@ -193,6 +207,11 @@ export const FERRAMENTAS: Ferramenta[] = [
 ];
 
 export const FERRAMENTAS_ATIVAS = FERRAMENTAS.filter((f) => f.status === 'ativo');
+
+/** O que vai para a tag <title>. Cai no nome quando não há título próprio. */
+export function tituloSeo(ferramenta: Ferramenta): string {
+  return ferramenta.tituloSeo ?? ferramenta.nome;
+}
 
 export function buscarFerramenta(slug: string): Ferramenta | undefined {
   return FERRAMENTAS.find((f) => f.slug === slug);
