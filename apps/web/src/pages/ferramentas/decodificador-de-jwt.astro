@@ -48,5 +48,14 @@ if (!meta) throw new Error('Ferramenta "decodificador-de-jwt" ausente do registr
       <code>jti</code> para um identificador único. As três datas são epoch em
       segundos, e a ferramenta mostra cada uma já convertida.
     </p>
+
+    <h2>JWT decoder, e o que ele não faz</h2>
+    <p>
+      Em inglês a ferramenta aparece como <em>JWT decoder</em> ou
+      <em>JWT viewer</em>. Decodificar não é validar: o header e o payload de
+      um JWT são Base64, legíveis por qualquer um, e a assinatura é o que
+      prova a origem do token. Esta página lê o conteúdo; conferir a
+      assinatura exige a chave, que você não deve colar em site nenhum.
+    </p>
   </TextoSeo>
 </Ferramenta>

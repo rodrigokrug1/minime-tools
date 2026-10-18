@@ -67,5 +67,14 @@ if (!meta) throw new Error('Ferramenta "base64" ausente do registry.');
       nenhum — o que importa, considerando que Base64 costuma carregar
       justamente aquilo que alguém achou que estava escondendo.
     </p>
+
+    <h2>Base64 encode e decode</h2>
+    <p>
+      A documentação e a maioria das bibliotecas chamam as duas operações de
+      <em>encode</em> e <em>decode</em>. Codificar é transformar bytes em
+      texto seguro para trafegar; decodificar é o caminho de volta. Vale
+      lembrar que Base64 não é criptografia: qualquer pessoa desfaz, e é por
+      isso que token e senha em Base64 não estão protegidos, só disfarçados.
+    </p>
   </TextoSeo>
 </Ferramenta>
