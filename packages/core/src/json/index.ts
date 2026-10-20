@@ -14,7 +14,14 @@ export type ErroJson = {
   trecho: string;
 };
 
-export type ResultadoJson = { ok: true; saida: string } | { ok: false; erro: ErroJson };
+export type ResultadoJson =
+  | {
+      ok: true;
+      saida: string;
+      /** Verdadeiro quando a entrada estava embutida numa string e foi desembrulhada. */
+      desescapado: boolean;
+    }
+  | { ok: false; erro: ErroJson };
 
 /** Converte o índice absoluto devolvido pelo parser em linha e coluna. */
 function posicao(texto: string, indice: number): { linha: number; coluna: number } {
@@ -77,10 +84,96 @@ function extrairIndice(mensagem: string, entrada: string): number | null {
   return null;
 }
 
-function analisar(entrada: string): { valor: unknown } | { erro: ErroJson } {
+/**
+ * Só desembrulha quando o conteúdo é objeto ou array. Um documento JSON que é
+ * apenas a string "42" é legítimo, e transformá-lo no número 42 seria mudar o
+ * dado de quem só queria formatá-lo.
+ */
+function parseDeEstrutura(texto: string): unknown | undefined {
   try {
-    return { valor: JSON.parse(entrada) };
+    const valor = JSON.parse(texto);
+
+    return valor !== null && typeof valor === 'object' ? valor : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Quebra de linha e tabulação crus são inválidos dentro de uma string JSON, e
+ * um payload copiado de log costuma trazê-los. Escapar antes de reembrulhar
+ * evita que o desescape falhe por causa de um \n no meio.
+ */
+function escaparControles(texto: string): string {
+  const conhecidos: Record<string, string> = {
+    '\n': '\\n',
+    '\r': '\\r',
+    '\t': '\\t',
+    '\b': '\\b',
+    '\f': '\\f',
+  };
+
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: é exatamente o alvo
+  return texto.replace(/[\u0000-\u001f]/g, (caractere) => {
+    const pronto = conhecidos[caractere];
+    if (pronto) return pronto;
+
+    return `\\u${caractere.charCodeAt(0).toString(16).padStart(4, '0')}`;
+  });
+}
+
+/**
+ * JSON que chega escapado — de um log, de uma coluna de texto no banco, do
+ * corpo de um webhook que alguém gravou como string. Vem com `\"` no lugar de
+ * `"`, às vezes com as aspas externas, às vezes sem.
+ *
+ * O desescape é feito pelo próprio `JSON.parse`, reembrulhando o texto em
+ * aspas, e não por troca de `\"` por `"`: a regra de escape do JSON tem
+ * contrabarra dupla, `\uXXXX` e companhia, e um replace ingênuo corrompe
+ * justamente os campos que carregam caminho de Windows ou acento escapado.
+ */
+function desescapar(entrada: string): string | null {
+  const texto = entrada.trim();
+
+  // Sem contrabarra antes de aspas não há escape a desfazer.
+  if (!texto.includes('\\"')) return null;
+
+  const jaTemAspas = texto.length > 1 && texto.startsWith('"') && texto.endsWith('"');
+  const embrulhado = jaTemAspas ? texto : `"${texto}"`;
+
+  try {
+    const solto = JSON.parse(escaparControles(embrulhado));
+
+    return typeof solto === 'string' ? solto : null;
+  } catch {
+    return null;
+  }
+}
+
+function analisar(entrada: string): { valor: unknown; desescapado: boolean } | { erro: ErroJson } {
+  try {
+    const valor = JSON.parse(entrada);
+
+    // Entrada que é uma string contendo JSON: `"{\"a\":1}"` passa no parse e
+    // devolve texto. Quem colou isso quer ver o objeto, não a string.
+    if (typeof valor === 'string') {
+      const interno = parseDeEstrutura(valor);
+
+      if (interno !== undefined) return { valor: interno, desescapado: true };
+    }
+
+    return { valor, desescapado: false };
   } catch (falha) {
+    // Antes de desistir: pode ser JSON escapado sem as aspas externas, que é
+    // como um payload sai da maioria dos logs.
+    const solto = desescapar(entrada);
+
+    if (solto !== null) {
+      const interno = parseDeEstrutura(solto);
+
+      if (interno !== undefined) return { valor: interno, desescapado: true };
+    }
+
     const mensagem = falha instanceof Error ? falha.message : 'JSON inválido.';
     const indice = extrairIndice(mensagem, entrada);
 
@@ -113,7 +206,11 @@ export function formatarJson(entrada: string, espacos = 2): ResultadoJson {
 
   if ('erro' in resultado) return { ok: false, erro: resultado.erro };
 
-  return { ok: true, saida: JSON.stringify(resultado.valor, null, espacos) };
+  return {
+    ok: true,
+    saida: JSON.stringify(resultado.valor, null, espacos),
+    desescapado: resultado.desescapado,
+  };
 }
 
 export function minificarJson(entrada: string): ResultadoJson {
@@ -128,7 +225,7 @@ export function minificarJson(entrada: string): ResultadoJson {
 
   if ('erro' in resultado) return { ok: false, erro: resultado.erro };
 
-  return { ok: true, saida: JSON.stringify(resultado.valor) };
+  return { ok: true, saida: JSON.stringify(resultado.valor), desescapado: resultado.desescapado };
 }
 
 /** Ordena as chaves de todo objeto, em qualquer profundidade. */
@@ -151,5 +248,9 @@ export function formatarJsonOrdenado(entrada: string, espacos = 2): ResultadoJso
 
   if ('erro' in resultado) return { ok: false, erro: resultado.erro };
 
-  return { ok: true, saida: JSON.stringify(ordenarChaves(resultado.valor), null, espacos) };
+  return {
+    ok: true,
+    saida: JSON.stringify(ordenarChaves(resultado.valor), null, espacos),
+    desescapado: resultado.desescapado,
+  };
 }

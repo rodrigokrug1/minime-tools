@@ -110,7 +110,7 @@ export const FERRAMENTAS: Ferramenta[] = [
     palavrasChave: ['json', 'formatar', 'indentar', 'minificar', 'validar', 'json formatter'],
     clientSide: true,
     status: 'ativo',
-    atualizadoEm: '2026-10-18',
+    atualizadoEm: '2026-10-20',
   },
   {
     slug: 'formatador-de-sql',

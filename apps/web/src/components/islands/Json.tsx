@@ -9,6 +9,7 @@ export default function Json() {
   const [entrada, setEntrada] = useState('');
   const [saida, setSaida] = useState('');
   const [erro, setErro] = useState<ErroJson | null>(null);
+  const [desescapado, setDesescapado] = useState(false);
   const [espacos, setEspacos] = useState(2);
   const [ordenar, setOrdenar] = useState(false);
 
@@ -16,9 +17,11 @@ export default function Json() {
     if (resultado.ok) {
       setSaida(resultado.saida);
       setErro(null);
+      setDesescapado(resultado.desescapado);
     } else {
       setSaida('');
       setErro(resultado.erro);
+      setDesescapado(false);
     }
   };
 
@@ -66,6 +69,7 @@ export default function Json() {
             setEntrada(EXEMPLO);
             setSaida('');
             setErro(null);
+            setDesescapado(false);
           }}
         >
           Usar exemplo
@@ -86,12 +90,19 @@ export default function Json() {
             onChange={(evento) => {
               setEntrada(evento.target.value);
               setErro(null);
+              setDesescapado(false);
             }}
           />
         </div>
 
         <PainelSaida rotulo="Saída" valor={saida} />
       </div>
+
+      {desescapado && (
+        <p className="aviso">
+          O texto estava escapado, como sai de um log. Os escapes foram desfeitos antes de formatar.
+        </p>
+      )}
 
       {erro && (
         <div className="erro-bloco" role="alert">

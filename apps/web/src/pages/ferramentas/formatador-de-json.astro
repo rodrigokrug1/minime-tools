@@ -57,5 +57,17 @@ if (!meta) throw new Error('Ferramenta "formatador-de-json" ausente do registry.
       com a árvore do documento navegável. Minificar aparece como
       <em>minify</em> ou <em>compact</em>. São todos o que esta página faz.
     </p>
+
+    <h2>JSON que chegou escapado</h2>
+    <p>
+      Payload copiado de log, de coluna de texto no banco ou do corpo de um
+      webhook gravado como string chega com <code>\"</code> no lugar de cada
+      aspas, às vezes com aspas externas em volta de tudo. Colar aqui funciona:
+      quando o texto não é JSON válido, a ferramenta tenta desfazer os escapes
+      antes de desistir, e avisa quando precisou fazer isso. O desescape usa o
+      próprio parser, não troca de <code>\"</code> por <code>"</code> — a
+      diferença aparece em campo com caminho do Windows, quebra de linha ou
+      aspas dentro do valor, que o atalho ingênuo corrompe.
+    </p>
   </TextoSeo>
 </Ferramenta>

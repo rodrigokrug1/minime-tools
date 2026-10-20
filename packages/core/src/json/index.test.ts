@@ -88,3 +88,111 @@ describe('ordenarChaves', () => {
     expect(resultado.saida).toBe('[{"a":2,"z":1}]');
   });
 });
+
+describe('JSON escapado', () => {
+  // Montado a partir do objeto, nunca escrito à mão: contar contrabarra em
+  // literal de teste é a forma clássica de testar a coisa errada.
+  const original = {
+    status: 'PAYMENT_SUCCESS',
+    caminho: 'C:\\temp\\recibo.txt',
+    nota: 'primeira linha\nsegunda linha',
+    aspas: 'ele disse "oi"',
+    acento: 'operação',
+    itens: [{ valor: 40025, moeda: 'BRL' }],
+  };
+
+  const documento = JSON.stringify(original);
+  /** Como sai de um log: escapado e com as aspas externas. */
+  const comAspas = JSON.stringify(documento);
+  /** Como costuma ser colado: escapado, sem as aspas externas. */
+  const semAspas = comAspas.slice(1, -1);
+
+  it('desembrulha JSON escapado sem as aspas externas', () => {
+    const resultado = formatarJson(semAspas);
+
+    expect(resultado.ok).toBe(true);
+    if (!resultado.ok) return;
+
+    expect(JSON.parse(resultado.saida)).toEqual(original);
+    expect(resultado.desescapado).toBe(true);
+  });
+
+  it('desembrulha JSON escapado com as aspas externas', () => {
+    const resultado = formatarJson(comAspas);
+
+    expect(resultado.ok).toBe(true);
+    if (!resultado.ok) return;
+
+    expect(JSON.parse(resultado.saida)).toEqual(original);
+    expect(resultado.desescapado).toBe(true);
+  });
+
+  it('preserva contrabarra, quebra de linha e aspas internas', () => {
+    const resultado = formatarJson(semAspas);
+
+    expect(resultado.ok).toBe(true);
+    if (!resultado.ok) return;
+
+    const voltou = JSON.parse(resultado.saida) as typeof original;
+
+    // O replace ingênuo de \" por " corrompe exatamente estes três campos.
+    expect(voltou.caminho).toBe('C:\\temp\\recibo.txt');
+    expect(voltou.nota).toBe('primeira linha\nsegunda linha');
+    expect(voltou.aspas).toBe('ele disse "oi"');
+    expect(voltou.acento).toBe('operação');
+  });
+
+  it('não marca desescapado quando o JSON já vem limpo', () => {
+    const resultado = formatarJson(documento);
+
+    expect(resultado.ok).toBe(true);
+    if (!resultado.ok) return;
+
+    expect(resultado.desescapado).toBe(false);
+  });
+
+  it('não desembrulha documento que é só uma string ou um número', () => {
+    for (const entrada of ['"42"', '"texto solto"', '42']) {
+      const resultado = formatarJson(entrada);
+
+      expect(resultado.ok).toBe(true);
+      if (!resultado.ok) continue;
+
+      expect(resultado.desescapado).toBe(false);
+      expect(JSON.parse(resultado.saida)).toEqual(JSON.parse(entrada));
+    }
+  });
+
+  it('continua reportando o erro original quando nem desescapado vale', () => {
+    const resultado = formatarJson('{\\"a\\": }');
+
+    expect(resultado.ok).toBe(false);
+    if (resultado.ok) return;
+
+    expect(resultado.erro.mensagem).toBeTruthy();
+  });
+
+  it('vale para minificar e para ordenar chaves', () => {
+    const minificado = minificarJson(semAspas);
+    expect(minificado.ok).toBe(true);
+    if (minificado.ok) {
+      expect(JSON.parse(minificado.saida)).toEqual(original);
+      expect(minificado.desescapado).toBe(true);
+    }
+
+    const ordenado = formatarJsonOrdenado(semAspas);
+    expect(ordenado.ok).toBe(true);
+    if (ordenado.ok) {
+      expect(JSON.parse(ordenado.saida)).toEqual(original);
+      expect(ordenado.desescapado).toBe(true);
+      expect(Object.keys(JSON.parse(ordenado.saida))).toEqual([
+        'acento',
+        'aspas',
+        'caminho',
+        'itens',
+        'nota',
+        'status',
+      ]);
+    }
+  });
+});
