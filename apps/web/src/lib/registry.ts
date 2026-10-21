@@ -230,6 +230,7 @@ export const FERRAMENTAS: Ferramenta[] = [
     palavrasChave: ['horas', 'ponto', 'banco de horas', 'jornada', 'saldo'],
     clientSide: true,
     status: 'ativo',
+    atualizadoEm: '2026-10-21',
   },
 ];
 

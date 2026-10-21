@@ -97,6 +97,7 @@ export {
   type Marcacao,
   MENSAGEM_HORA,
   MENSAGEM_TIMESTAMP,
+  normalizarHora,
   paraHora,
   paraMinutos,
   type ResultadoTimestamp,

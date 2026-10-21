@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { calcularJornada, converterTimestamp, paraHora, paraMinutos } from './index.js';
+import {
+  calcularJornada,
+  converterTimestamp,
+  normalizarHora,
+  paraHora,
+  paraMinutos,
+} from './index.js';
 
 describe('converterTimestamp', () => {
   it('interpreta número pequeno como segundos', () => {
@@ -121,5 +127,58 @@ describe('calcularJornada', () => {
 
     expect(resumo.temErro).toBe(true);
     expect(resumo.totalMinutos).toBe(0);
+  });
+});
+
+describe('normalizarHora', () => {
+  it('completa o que dá para ler sem adivinhar', () => {
+    const casos: [string, string][] = [
+      ['8', '08:00'],
+      ['08', '08:00'],
+      ['18', '18:00'],
+      ['830', '08:30'],
+      ['0830', '08:30'],
+      ['1830', '18:30'],
+      ['8:30', '08:30'],
+      ['08:30', '08:30'],
+      ['8h30', '08:30'],
+      ['8H30', '08:30'],
+      ['8.30', '08:30'],
+      ['8,30', '08:30'],
+      ['8:', '08:00'],
+      ['8h', '08:00'],
+      ['  9:5  ', '09:05'],
+      ['0', '00:00'],
+      ['2359', '23:59'],
+    ];
+
+    for (const [entrada, esperado] of casos) {
+      expect(normalizarHora(entrada), `entrada ${JSON.stringify(entrada)}`).toBe(esperado);
+    }
+  });
+
+  it('lê minuto incompleto ao pé da letra, sem completar para 30', () => {
+    expect(normalizarHora('8:3')).toBe('08:03');
+  });
+
+  it('devolve intacto o que não vira hora válida', () => {
+    // Apagar ou inventar em cima de entrada inválida esconderia o erro: o
+    // campo ficaria bonito e o total, errado.
+    for (const entrada of ['2500', '999', '25:00', '12:99', 'abc', '8:30:00', '--', '12345']) {
+      expect(normalizarHora(entrada), `entrada ${JSON.stringify(entrada)}`).toBe(entrada);
+    }
+  });
+
+  it('mantém vazio como vazio', () => {
+    expect(normalizarHora('')).toBe('');
+    expect(normalizarHora('   ')).toBe('');
+  });
+
+  it('produz sempre algo que paraMinutos entende', () => {
+    for (const entrada of ['8', '830', '8h30', '0830', '8:', '2359', '0']) {
+      const normalizado = normalizarHora(entrada);
+
+      expect(paraMinutos(normalizado), `entrada ${JSON.stringify(entrada)}`).not.toBeNull();
+    }
   });
 });

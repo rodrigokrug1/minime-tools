@@ -129,6 +129,59 @@ export function paraHora(minutos: number): string {
   return `${sinal}${String(Math.floor(absoluto / 60)).padStart(2, '0')}:${String(absoluto % 60).padStart(2, '0')}`;
 }
 
+/**
+ * Monta "HH:MM" a partir dos dois pedaços já separados, ou devolve null quando
+ * o valor não existe no relógio.
+ */
+function montarHora(horaBruta: string, minutoBruto: string): string | null {
+  const horas = Number(horaBruta);
+  const minutos = Number(minutoBruto);
+
+  if (horas > 23 || minutos > 59) return null;
+
+  return `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}`;
+}
+
+/**
+ * Arruma para "HH:MM" o que a pessoa digitou, para ser aplicado quando ela sai
+ * do campo. "8" vira "08:00", "830" vira "08:30", "8h30" também.
+ *
+ * O que não der para ler sem adivinhar volta exatamente como veio. Máscara que
+ * apaga ou inventa em cima de entrada inválida é pior que máscara nenhuma: ela
+ * esconde o erro em vez de mostrá-lo, e a pessoa só descobre no total errado.
+ *
+ * Minuto incompleto é lido ao pé da letra: "8:3" vira "08:03", não "08:30".
+ * Completar para 30 seria adivinhar intenção, e errado metade das vezes.
+ */
+export function normalizarHora(texto: string): string {
+  const limpo = texto.trim();
+
+  if (limpo === '') return '';
+
+  // Dois-pontos, ponto, vírgula ou "h" — "8h30" é como se escreve por aqui.
+  const comSeparador = limpo.match(/^(\d{1,2})\s*[:.,h]\s*(\d{1,2})$/i);
+  if (comSeparador?.[1] && comSeparador[2]) {
+    return montarHora(comSeparador[1], comSeparador[2]) ?? texto;
+  }
+
+  // Separador digitado sem os minutos: "8:" ou "8h".
+  const soHora = limpo.match(/^(\d{1,2})\s*[:.,h]\s*$/i);
+  if (soHora?.[1]) return montarHora(soHora[1], '0') ?? texto;
+
+  const soDigitos = limpo.match(/^\d{1,4}$/);
+  if (soDigitos) {
+    const digitos = limpo;
+
+    // Até dois dígitos é hora cheia; de três em diante, os dois últimos são os
+    // minutos — "830" é oito e meia, não oitenta e três horas.
+    if (digitos.length <= 2) return montarHora(digitos, '0') ?? texto;
+
+    return montarHora(digitos.slice(0, -2), digitos.slice(-2)) ?? texto;
+  }
+
+  return texto;
+}
+
 export function calcularJornada(marcacoes: Marcacao[], jornadaMinutos = 480): ResumoJornada {
   const linhas: LinhaCalculada[] = marcacoes.map(({ entrada, saida }) => {
     const inicio = paraMinutos(entrada);

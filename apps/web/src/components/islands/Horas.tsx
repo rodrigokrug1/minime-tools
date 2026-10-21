@@ -1,4 +1,11 @@
-import { calcularJornada, type Marcacao, MENSAGEM_HORA, paraHora, paraMinutos } from '@minime/core';
+import {
+  calcularJornada,
+  type Marcacao,
+  MENSAGEM_HORA,
+  normalizarHora,
+  paraHora,
+  paraMinutos,
+} from '@minime/core';
 import { useMemo, useState } from 'react';
 import './Texto.css';
 
@@ -38,6 +45,15 @@ export default function Horas() {
     );
   };
 
+  /**
+   * A máscara é aplicada ao sair do campo, não a cada tecla: formatar durante
+   * a digitação empurra o cursor e atrapalha quem está corrigindo o meio do
+   * texto. O cálculo já aceitava "830"; o que faltava era o campo mostrar
+   * "08:30" depois.
+   */
+  const arrumar = (indice: number, campo: keyof Marcacao) =>
+    atualizar(indice, campo, normalizarHora(marcacoes[indice]?.[campo] ?? ''));
+
   return (
     <div className="texto-ferramenta">
       <div className="acoes">
@@ -49,6 +65,7 @@ export default function Horas() {
             inputMode="numeric"
             value={jornada}
             onChange={(evento) => setJornada(evento.target.value)}
+            onBlur={() => setJornada(normalizarHora(jornada))}
             aria-label="Jornada esperada no formato HH:MM"
           />
         </label>
@@ -88,6 +105,7 @@ export default function Horas() {
                     placeholder="08:00"
                     value={linha.entrada}
                     onChange={(evento) => atualizar(indice, 'entrada', evento.target.value)}
+                    onBlur={() => arrumar(indice, 'entrada')}
                     aria-label={`Entrada do período ${indice + 1}`}
                   />
                 </td>
@@ -99,6 +117,7 @@ export default function Horas() {
                     placeholder="12:00"
                     value={linha.saida}
                     onChange={(evento) => atualizar(indice, 'saida', evento.target.value)}
+                    onBlur={() => arrumar(indice, 'saida')}
                     aria-label={`Saída do período ${indice + 1}`}
                   />
                 </td>
