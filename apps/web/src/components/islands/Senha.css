@@ -1,0 +1,147 @@
+.senha-ferramenta {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 44rem;
+}
+
+.senha-saida {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.senha-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* A senha é para ser lida caractere a caractere — monoespaçada e com folga
+   entre letras, para não confundir o que a opção de ambíguos não cobre. */
+.senha-campo {
+  flex: 1 1 18rem;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 1.125rem;
+  letter-spacing: 0.04em;
+}
+
+.senha-forca {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4375rem;
+}
+
+.senha-barra {
+  height: 0.375rem;
+  border-radius: 999px;
+  background-color: var(--superficie-alta);
+  overflow: hidden;
+}
+
+.senha-barra-cheia {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transition: width 120ms ease-out;
+}
+
+.senha-medida {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 0.8125rem;
+}
+
+.senha-bits {
+  color: var(--texto-fraco);
+  font-family: var(--font-mono);
+}
+
+/* A cor acompanha o rótulo, mas nunca carrega a informação sozinha: o texto
+   "Fraca" e os bits estão sempre ali ao lado. */
+.senha-forca-fraca {
+  color: var(--color-invalido);
+  background-color: var(--color-invalido);
+}
+
+.senha-forca-razoavel {
+  color: var(--color-carimbo);
+  background-color: var(--color-carimbo);
+}
+
+.senha-forca-boa,
+.senha-forca-excelente {
+  color: var(--color-valido);
+  background-color: var(--color-valido);
+}
+
+/* Nos textos a cor vale; o fundo, não. */
+strong.senha-forca-fraca,
+strong.senha-forca-razoavel,
+strong.senha-forca-boa,
+strong.senha-forca-excelente {
+  background-color: transparent;
+}
+
+.senha-controles {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.senha-comprimento {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 24rem;
+}
+
+/* O controle é desenhado à mão em vez de depender do `accent-color`. O trilho
+   padrão do Chromium ignora o tema do site e sai escuro mesmo sob
+   `color-scheme: light`, e `accent-color` colore o preenchimento e o botão sem
+   tocar no trilho. O preenchimento vem de um gradiente até `--preenchido`, que
+   o componente calcula e passa inline. */
+.senha-range {
+  --preenchido: 0%;
+
+  width: 100%;
+  height: 0.5rem;
+  margin: 0.5rem 0;
+  /* O contorno não é enfeite: no tema claro a superfície do trilho é quase
+     branca e, sem ele, a parte ainda não percorrida desaparece no fundo. */
+  box-sizing: border-box;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  background: linear-gradient(
+    to right,
+    var(--color-valido) 0 var(--preenchido),
+    var(--superficie-alta) var(--preenchido) 100%
+  );
+}
+
+.senha-range::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.0625rem;
+  height: 1.0625rem;
+  border: 2px solid var(--superficie);
+  border-radius: 50%;
+  background-color: var(--color-valido);
+  cursor: pointer;
+}
+
+.senha-range::-moz-range-thumb {
+  width: 1.0625rem;
+  height: 1.0625rem;
+  border: 2px solid var(--superficie);
+  border-radius: 50%;
+  background-color: var(--color-valido);
+  cursor: pointer;
+}

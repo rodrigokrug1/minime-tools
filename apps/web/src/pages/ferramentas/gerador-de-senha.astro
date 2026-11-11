@@ -1,0 +1,78 @@
+---
+import Senha from '../../components/islands/Senha';
+import Cabecalho from '../../components/shell/Cabecalho.astro';
+import TextoSeo from '../../components/shell/TextoSeo.astro';
+import Ferramenta from '../../layouts/Ferramenta.astro';
+import { buscarFerramenta, tituloSeo } from '../../lib/registry';
+
+const meta = buscarFerramenta('gerador-de-senha');
+
+if (!meta) throw new Error('Ferramenta "gerador-de-senha" ausente do registry.');
+---
+
+<Ferramenta titulo={tituloSeo(meta)} descricao={meta.descricao}>
+  <Cabecalho titulo={meta.nome} descricao={meta.descricao} />
+
+  <Senha client:load />
+
+  <TextoSeo>
+    <h2>A senha não sai do seu navegador</h2>
+    <p>
+      O sorteio acontece na sua máquina, em JavaScript, e a senha nunca é
+      enviada para lugar nenhum — não há requisição, não há registro, não há
+      servidor que a veja. Vale desconfiar de gerador de senha que não diz onde
+      sorteia: se a senha foi gerada no servidor de outra pessoa, ela já esteve
+      na mão de outra pessoa.
+    </p>
+
+    <h2>O que são os bits de entropia</h2>
+    <p>
+      Entropia mede quantas senhas diferentes o sorteio poderia ter produzido
+      com as opções escolhidas, em potências de dois. Vinte caracteres sorteados
+      de um alfabeto de setenta e oito dão cento e vinte e seis bits: o número
+      de resultados possíveis é dois elevado a cento e vinte e seis. Quanto
+      maior, mais caro fica para alguém tentar todas as combinações.
+    </p>
+    <p>
+      O número vale para o sorteio, não para senha pensada por gente. "Casa@2024"
+      tem nove caracteres com letra, número e símbolo, e mesmo assim cai rápido,
+      porque não foi sorteada — seguiu um padrão que qualquer lista de tentativas
+      já conhece.
+    </p>
+
+    <h2>Comprimento vence variedade</h2>
+    <p>
+      Uma senha de oito caracteres com maiúscula, número e símbolo tem menos
+      entropia que uma de vinte só com letras minúsculas. Por isso a medida aqui
+      é a entropia e não a regrinha de "precisa ter um caractere especial", que
+      empurra todo mundo para o mesmo punhado de senhas e dá sensação de
+      segurança sem entregá-la.
+    </p>
+
+    <h2>Por que o sorteio usa gerador criptográfico</h2>
+    <p>
+      O sorteio usa a Web Crypto do navegador, não o <code>Math.random</code>.
+      O <code>Math.random</code> serve para embaralhar um jogo, mas é previsível
+      a partir de algumas saídas observadas — uma senha sorteada com ele parece
+      aleatória e não é. Se o navegador não oferecer a Web Crypto, esta
+      ferramenta recusa e avisa, em vez de entregar algo pior em silêncio.
+    </p>
+
+    <h2>Caracteres ambíguos</h2>
+    <p>
+      A opção tira zero e O maiúsculo, um, L minúsculo e I maiúsculo — os que se
+      confundem ao ler de um papel ou ditar no telefone. Ela reduz um pouco o
+      alfabeto, e portanto a entropia, o que a barra já mostra: se a senha vai
+      direto para um gerenciador, não vale ligar.
+    </p>
+
+    <h2>Onde guardar depois</h2>
+    <p>
+      Senha sorteada só ajuda se for diferente em cada serviço, e ninguém decora
+      vinte caracteres aleatórios para dez sites. O destino natural é um
+      gerenciador de senhas, que guarda todas atrás de uma só. Senha reutilizada
+      é o que transforma o vazamento de um site qualquer em problema na sua
+      conta de banco.
+    </p>
+  </TextoSeo>
+</Ferramenta>

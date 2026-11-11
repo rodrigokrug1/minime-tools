@@ -90,6 +90,19 @@ export {
   type ResultadoPix,
 } from './pix/index.js';
 export {
+  avaliarForca,
+  COMPRIMENTO_MAXIMO,
+  COMPRIMENTO_MINIMO,
+  COMPRIMENTO_PADRAO,
+  type Forca,
+  gerarSenha,
+  MENSAGEM_SENHA,
+  type MotivoSenhaInvalida,
+  type OpcoesDeSenha,
+  type ResultadoSenha,
+  ROTULO_DA_FORCA,
+} from './senha/index.js';
+export {
   calcularJornada,
   converterTimestamp,
   type InstanteConvertido,
